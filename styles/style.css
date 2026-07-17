@@ -675,6 +675,10 @@ button {
   justify-content: start;
 }
 
+.heatmap--empty {
+  display: none;
+}
+
 .heatmap__cell {
   width: 11px;
   height: 11px;

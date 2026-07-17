@@ -1,44 +1,32 @@
 import { describe, expect, it } from "vitest";
-import { buildSeedContributions, seedActivity, seedCommits, seedGitHub } from "../../src/seed.js";
+import { seedActivity, seedGitHub } from "../../src/seed.js";
+import { recentCommits } from "../../src/github-activity.generated.js";
 import { siteConfig } from "../../src/config.js";
 
-describe("buildSeedContributions", () => {
-  it("produces the requested number of cells with valid levels", () => {
-    const cells = buildSeedContributions(105);
-    expect(cells).toHaveLength(105);
-    for (const cell of cells) {
-      expect(cell.level).toBeGreaterThanOrEqual(0);
-      expect(cell.level).toBeLessThanOrEqual(4);
-      expect(cell.count).toBeGreaterThanOrEqual(0);
-      if (cell.level === 0) {
-        expect(cell.count).toBe(0);
-      }
+// The seed is now build-baked real data (scripts/github.mjs), so these assert
+// structure/provenance rather than specific placeholder values.
+describe("seed data", () => {
+  it("derives the github summary branding from the site config", () => {
+    expect(seedGitHub.handle).toBe(siteConfig.identity.githubHandle);
+    expect(seedGitHub.profileUrl).toBe(siteConfig.identity.githubUrl);
+  });
+
+  it("carries well-formed, non-negative github figures", () => {
+    expect(Array.isArray(seedGitHub.contributions)).toBe(true);
+    expect(seedGitHub.contributionCount).toBeGreaterThanOrEqual(0);
+    expect(seedGitHub.repoCount).toBeGreaterThanOrEqual(0);
+  });
+
+  it("every baked commit is well-formed", () => {
+    for (const commit of recentCommits) {
+      expect(commit.hash).toMatch(/^[0-9a-f]+$/);
+      expect(commit.message.length).toBeGreaterThan(0);
+      expect(commit.url).toMatch(/^https:\/\/github\.com\//);
     }
   });
 
-  it("is deterministic across calls", () => {
-    expect(buildSeedContributions(20)).toEqual(buildSeedContributions(20));
-  });
-
-  it("defaults to 105 cells (7 rows × 15 weeks)", () => {
-    expect(buildSeedContributions()).toHaveLength(105);
-  });
-});
-
-describe("seed data", () => {
-  it("exposes five placeholder commits", () => {
-    expect(seedCommits).toHaveLength(5);
-    expect(seedCommits[0]).toHaveProperty("hash");
-  });
-
-  it("derives the github summary from the site config", () => {
-    expect(seedGitHub.handle).toBe(siteConfig.identity.githubHandle);
-    expect(seedGitHub.profileUrl).toBe(siteConfig.identity.githubUrl);
-    expect(seedGitHub.contributions.length).toBeGreaterThan(0);
-  });
-
-  it("bundles commits and github into seedActivity", () => {
-    expect(seedActivity.commits).toBe(seedCommits);
+  it("bundles baked commits and the github summary into seedActivity", () => {
+    expect(seedActivity.commits).toBe(recentCommits);
     expect(seedActivity.github).toBe(seedGitHub);
   });
 });

@@ -21,7 +21,11 @@ const summary: GitHubSummary = {
 
 describe("contributionSummary", () => {
   it("formats the count with grouping and the repo tally", () => {
-    expect(contributionSummary(summary)).toBe("1,204 contributions this year · 34 repos");
+    expect(contributionSummary(summary)).toBe("1,204 contributions in the last year · 34 repos");
+  });
+
+  it("omits a zero/unpopulated contribution count, showing only repos", () => {
+    expect(contributionSummary({ ...summary, contributionCount: 0 })).toBe("34 public repos");
   });
 });
 
@@ -44,6 +48,13 @@ describe("renderHeatmap", () => {
     const heatmap = renderHeatmap(summary.contributions);
     expect(heatmap.getAttribute("aria-hidden")).toBe("true");
     expect(heatmap.querySelectorAll(".heatmap__cell")).toHaveLength(2);
+    expect(heatmap.classList.contains("heatmap--empty")).toBe(false);
+  });
+
+  it("collapses via heatmap--empty when there are no cells", () => {
+    const heatmap = renderHeatmap([]);
+    expect(heatmap.classList.contains("heatmap--empty")).toBe(true);
+    expect(heatmap.querySelectorAll(".heatmap__cell")).toHaveLength(0);
   });
 });
 
@@ -74,6 +85,14 @@ describe("updateGitHubPanel", () => {
     expect(panel.querySelector('[data-testid="github-caption"]')?.textContent).toContain("· 40 repos");
     expect(panel.querySelectorAll(".heatmap__cell")).toHaveLength(1);
     expect(panel.querySelector('[data-testid="github-link"]')?.getAttribute("href")).toBe("https://github.com/charlie");
+  });
+
+  it("collapses the heatmap when hydrated data has no contributions", () => {
+    const panel = renderGitHubPanel(summary);
+    updateGitHubPanel(panel, { ...summary, contributionCount: 0, contributions: [] });
+    const heatmap = panel.querySelector('[data-testid="heatmap"]');
+    expect(heatmap?.classList.contains("heatmap--empty")).toBe(true);
+    expect(panel.querySelector('[data-testid="github-caption"]')?.textContent).toBe("34 public repos");
   });
 
   it("is a safe no-op when the panel lacks the expected nodes", () => {
