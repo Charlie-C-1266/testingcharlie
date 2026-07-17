@@ -29,6 +29,8 @@ export default defineConfig({
         "src/main.ts",
         // Build-time generated data (from content/blog/*.md); no logic to cover.
         "src/posts.generated.ts",
+        // Build-time generated data (baked GitHub activity); no logic to cover.
+        "src/github-activity.generated.ts",
       ],
       thresholds: {
         lines: 95,

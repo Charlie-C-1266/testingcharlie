@@ -50,21 +50,47 @@ Each render function is pure — it takes typed data and returns a detached
 `HTMLElement`, which makes the whole UI unit-testable in jsdom. `main.ts` is the
 only module that reaches for real browser globals.
 
-## Data & the live GitHub API
+## Data & the GitHub API
 
-The recent-activity section is **progressively enhanced**:
+The recent-activity section shows **real** GitHub data, never placeholders. It is
+sourced in two ways:
 
-1. The page renders instantly from typed **seed data** (`src/seed.ts`), so it is
-   never blank and looks complete offline.
-2. `LiveDataSource` then hydrates in the background via `GitHubClient`:
-   - **recent commits** ← `GET /users/{user}/events/public` (public, no token)
-   - **repo count** ← `GET /users/{user}` (public, no token)
-3. Any failure (offline, rate-limited) is swallowed and the seed render stays.
+**Baked at build time** (`scripts/build-github-activity.mjs` → the committed
+`src/github-activity.generated.ts`, consumed by `src/seed.ts`):
 
-> The GitHub **contribution calendar** requires an authenticated GraphQL call,
-> which a static, backend-less site can't make safely, so the heat grid uses the
-> seed pattern. `GitHubClient` is injectable, so wiring a token-backed proxy
-> later is a drop-in change.
+- **recent commits** ← read from the repos you most recently pushed to
+  (`GET /repos/{repo}/commits`), merged newest-first, merge-commits dropped.
+  NB: the public *events* endpoint no longer returns commit details, so we can't
+  derive commit messages from it — hence reading the repos directly.
+- **public repo count** and **profile URL** ← `GET /users/{user}`.
+- **contribution calendar + yearly total** ← GitHub **GraphQL** (`contributions
+  collection`). This needs authentication, so it is fetched **only when
+  `GH_CONTRIB_TOKEN` is set** at build time.
+
+**Refreshed live at runtime** — `LiveDataSource` re-fetches the repo count and
+profile in the browser so they stay current between deploys. Any failure
+(offline, rate-limited) is swallowed and the baked data stays.
+
+> The build step is resilient: a network/token failure leaves the last committed
+> `github-activity.generated.ts` untouched and never blocks a build.
+
+### Enabling the contribution graph (`GH_CONTRIB_TOKEN`)
+
+The heat grid and "N contributions in the last year" figure need a token
+(everything else is public). Without one, the panel honestly shows just your
+public repo count — no fabricated grid.
+
+1. Create a **read-only** GitHub token — a fine-grained PAT (no extra scopes
+   needed for public contributions) or a classic PAT with `read:user`.
+2. Add it to the **Vercel** project → Settings → Environment Variables as
+   `GH_CONTRIB_TOKEN`. It is a **build secret** and is never shipped to the
+   browser (only the resulting public numbers are baked into static output).
+3. To preview locally: `GH_CONTRIB_TOKEN=xxx npm run build:site` (or
+   `npm run refresh:github`), then commit the regenerated
+   `src/github-activity.generated.ts`.
+
+Each deploy re-bakes fresh data. The calendar reflects the last 12 months as of
+the build.
 
 ## Writing (the blog)
 

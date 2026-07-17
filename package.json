@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "build:site": "node scripts/build-blog-manifest.mjs && tsc && node scripts/build-site.mjs",
+    "build:site": "node scripts/build-github-activity.mjs && node scripts/build-blog-manifest.mjs && tsc && node scripts/build-site.mjs",
+    "refresh:github": "node scripts/build-github-activity.mjs",
     "watch": "tsc --watch",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
     "serve": "npm run build:site && npx --yes serve public",
