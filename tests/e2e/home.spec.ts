@@ -47,9 +47,10 @@ test.describe("homepage", () => {
     await expect(page.locator(".site-footer__email")).toHaveAttribute("href", /^mailto:/);
   });
 
-  test("writing section shows a coming-soon placeholder", async ({ page }) => {
-    await expect(page.locator("#writing .writing__soon")).toContainText("coming soon");
-    await expect(page.locator("#writing .post")).toHaveCount(0);
+  test("writing section lists published posts", async ({ page }) => {
+    // Posts are generated from content/blog/*.md; at least the sample post ships.
+    await expect(page.locator("#writing a.post").first()).toBeVisible();
+    await expect(page.locator("#writing .writing__soon")).toHaveCount(0);
   });
 
   test("hero links to the portfolio in a new tab", async ({ page }) => {

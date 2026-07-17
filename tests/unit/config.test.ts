@@ -19,8 +19,15 @@ describe("siteConfig", () => {
     expect(siteConfig.socials.length).toBeGreaterThan(0);
   });
 
-  it("starts with no posts (writing shows 'coming soon')", () => {
-    expect(siteConfig.posts).toHaveLength(0);
+  it("wires up blog posts from the generated manifest, each well-formed", () => {
+    // Posts come from content/blog/*.md via scripts/build-blog-manifest.mjs.
+    // With no posts the array is empty and the writing section shows
+    // "coming soon"; here we assert whatever is present is shaped correctly.
+    for (const post of siteConfig.posts) {
+      expect(post.title).toBeTruthy();
+      expect(post.url).toMatch(/^\/blog\//);
+      expect(post.readingTime).toMatch(/\d+ min/);
+    }
   });
 
   it("lists GitHub and LinkedIn socials but not Mastodon", () => {

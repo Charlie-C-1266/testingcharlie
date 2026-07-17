@@ -1,4 +1,5 @@
 import type { SiteConfig } from "./types.js";
+import { generatedPosts } from "./posts.generated.js";
 
 // The single source of hand-authored content and settings for the homepage.
 // Edit values here to change what the page says — the render layer never
@@ -95,9 +96,9 @@ export const siteConfig: SiteConfig = {
       passing: true,
     },
   ],
-  // Empty until real posts exist — the writing section shows "coming soon".
-  // Add entries of shape { title, blurb, date, readingTime, url } to populate it.
-  posts: [],
+  // Generated from content/blog/*.md at build time (see scripts/blog.mjs).
+  // Empty until a post exists — the writing section then shows "coming soon".
+  posts: generatedPosts,
   footer: {
     prompt: "charlie@testing:~$ ./say-hello.sh",
     titleLines: ["Let's ship something", "that doesn't break."],

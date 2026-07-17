@@ -27,6 +27,8 @@ export default defineConfig({
         "src/**/*.d.ts",
         // Thin composition-root wiring is exercised end-to-end by Playwright.
         "src/main.ts",
+        // Build-time generated data (from content/blog/*.md); no logic to cover.
+        "src/posts.generated.ts",
       ],
       thresholds: {
         lines: 95,

@@ -9,6 +9,9 @@
     "declaration": false,
     "declarationMap": false,
     "sourceMap": false,
+    // The blog tests import the build-time engine (scripts/blog.mjs); let tsc
+    // infer its types from the JS rather than maintain a parallel .d.ts.
+    "allowJs": true,
     // Tests and tooling configs run under Node, so pull in @types/node here
     // (kept out of the browser build, which stays DOM-only).
     "types": ["node"]

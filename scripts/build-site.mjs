@@ -22,6 +22,7 @@ import {
 } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadPosts, renderBlogIndex, renderPostPage } from "./blog.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const out = join(root, "public");
@@ -71,13 +72,33 @@ async function copyScripts() {
   }
 }
 
+/**
+ * Render each Markdown post to public/blog/<slug>.html plus a /blog index.
+ * The pages are self-contained static HTML (see scripts/blog.mjs); `cleanUrls`
+ * in vercel.json serves them at /blog/<slug> and /blog.
+ */
+async function buildBlog() {
+  const posts = await loadPosts();
+  await mkdir(join(out, "blog"), { recursive: true });
+
+  for (const post of posts) {
+    await writeFile(join(out, "blog", `${post.slug}.html`), renderPostPage(post));
+  }
+  await writeFile(join(out, "blog", "index.html"), renderBlogIndex(posts));
+
+  return posts.length;
+}
+
 async function main() {
   await rm(out, { recursive: true, force: true });
   await mkdir(out, { recursive: true });
   await copyPages();
   await copyStyles();
   await copyScripts();
-  console.log(`Assembled static site → ${relative(root, out)}/`);
+  const postCount = await buildBlog();
+  console.log(
+    `Assembled static site → ${relative(root, out)}/ (${postCount} blog post${postCount === 1 ? "" : "s"})`,
+  );
 }
 
 await main();
