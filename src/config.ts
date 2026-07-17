@@ -18,6 +18,11 @@ export const siteConfig: SiteConfig = {
     shellUser: "charlie",
     shellHost: "testing",
   },
+  seo: {
+    title: "testingcharlie — Charlie · Senior Test Engineer",
+    // description omitted → the build reuses hero.lead below, so the "brief"
+    // sentence is authored in exactly one place.
+  },
   nav: [
     { label: "work", href: "#work" },
     { label: "writing", href: "#writing" },

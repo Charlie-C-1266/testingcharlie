@@ -3,11 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>testingcharlie — Charlie · Senior Test Engineer</title>
-    <meta
-      name="description"
-      content="Bristol-based senior test engineer building the automation, pipelines and frameworks that let teams ship fast — without shipping bugs."
-    />
+    <!-- Title + description are injected at build from siteConfig.seo (src/config.ts). -->
+    <title>__SEO_TITLE__</title>
+    <meta name="description" content="__SEO_DESCRIPTION__" />
     <meta name="color-scheme" content="light dark" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -21,8 +19,11 @@
 
     <!--
       Apply the saved (or preferred) theme before first paint to avoid a flash.
-      The typed ThemeController takes over once dist/main.js loads; this keeps
-      the storage key in sync with THEME_STORAGE_KEY in src/theme.ts.
+      The typed ThemeController takes over once dist/main.js loads. This inline
+      script is the single source of the boot code (scripts/blog.mjs reuses it
+      verbatim and vercel.json pins its hash), so it can't import a module — the
+      "tc-theme" key below must equal THEME_STORAGE_KEY in src/theme.ts, which a
+      unit test (tests/unit/csp.test.ts) now enforces so the two can't drift.
     -->
     <script>
       (function () {

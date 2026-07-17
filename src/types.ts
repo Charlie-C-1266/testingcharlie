@@ -122,9 +122,22 @@ export interface FooterContent {
   email: string;
 }
 
+/** Page metadata injected into the HTML shell at build time (see build-site.mjs). */
+export interface SeoMeta {
+  /** Document `<title>` and social title. */
+  title: string;
+  /**
+   * `<meta name="description">`. Omit to reuse the hero lead (the on-page
+   * brief) so that sentence lives in exactly one place.
+   */
+  description?: string;
+}
+
 /** The full, hand-authored configuration + content for the page. */
 export interface SiteConfig {
   identity: Identity;
+  /** SEO/social metadata baked into index.html at build (single source of truth). */
+  seo: SeoMeta;
   nav: NavItem[];
   socials: SocialLink[];
   /** Nav status line, e.g. "build: passing". */
