@@ -23,11 +23,13 @@ test.describe("recent activity", () => {
     await expect(page.getByTestId("github-caption")).toContainText("repos");
   });
 
-  test("shows no fabricated contribution grid without a build token", async ({ page }) => {
+  test("renders the real, build-baked contribution grid", async ({ page }) => {
     await failGitHub(page);
     await page.goto("/");
-    // Without GH_CONTRIB_TOKEN the calendar is empty and the grid is collapsed —
-    // real data or nothing, never a placeholder pattern.
-    await expect(page.getByTestId("heatmap").locator(".heatmap__cell")).toHaveCount(0);
+    // The grid is populated from real baked contribution data (or collapsed when
+    // none is baked) — never the old fixed placeholder pattern.
+    const cells = page.getByTestId("heatmap").locator(".heatmap__cell");
+    await expect(cells.first()).toBeVisible();
+    expect(await cells.count()).toBeGreaterThan(0);
   });
 });

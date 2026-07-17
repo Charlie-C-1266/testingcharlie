@@ -41,18 +41,20 @@ function firstLine(message) {
   return newline === -1 ? message : message.slice(0, newline);
 }
 
-/** Distinct `owner/repo` names of recent public PushEvents, newest first. */
-export function distinctPushedRepos(events, max) {
-  const repos = [];
-  for (const event of events) {
-    if (event.type !== "PushEvent") continue;
-    const name = event.repo?.name;
-    if (name && !repos.includes(name)) {
-      repos.push(name);
-      if (repos.length >= max) break;
-    }
-  }
-  return repos;
+/**
+ * Pick the `owner/repo` names to read commits from: the user's own,
+ * non-fork, non-archived repos, already ordered newest-pushed-first by the API,
+ * capped at `max`. Using the repos endpoint (not the events feed) means a repo
+ * shows up as soon as it's public + recently pushed — no dependency on a public
+ * PushEvent existing, which past private pushes never generate.
+ */
+export function selectRepos(repos, max) {
+  return repos
+    // Public only — never surface private-repo commits, even when the build is
+    // authenticated (an authed /repos call also returns private repos).
+    .filter((repo) => !repo.fork && !repo.archived && !repo.private)
+    .slice(0, max)
+    .map((repo) => repo.full_name);
 }
 
 /**
@@ -131,26 +133,31 @@ export async function fetchPublicActivity(login, options = {}) {
   const fetchImpl = options.fetch ?? fetch;
   const now = options.now ?? new Date();
   const commitLimit = options.commitLimit ?? 6;
-  const maxRepos = options.maxRepos ?? 3;
+  const maxRepos = options.maxRepos ?? 4;
   const perRepo = options.perRepo ?? 4;
   const base = options.baseUrl ?? "https://api.github.com";
   const headers = { Accept: "application/vnd.github+json", "User-Agent": "testingcharlie-build" };
+  // Authenticate REST when a token is available: lifts the 60/hr unauthenticated
+  // rate limit to 5,000/hr. selectRepos still filters to public repos, so this
+  // never widens what's shown — it only makes the build resilient.
+  if (options.token) headers.Authorization = `bearer ${options.token}`;
   const getJson = async (path) => {
     const res = await fetchImpl(`${base}${path}`, { headers });
     if (!res.ok) throw new Error(`GitHub REST ${path} → ${res.status}`);
     return res.json();
   };
 
-  const [events, user] = await Promise.all([
-    getJson(`/users/${encodeURIComponent(login)}/events/public?per_page=30`),
+  const [repos, user] = await Promise.all([
+    getJson(`/users/${encodeURIComponent(login)}/repos?sort=pushed&direction=desc&type=owner&per_page=20`),
     getJson(`/users/${encodeURIComponent(login)}`),
   ]);
 
-  // The events payload no longer carries commit details, so read commits from
-  // the repos the user most recently pushed to.
-  const repos = distinctPushedRepos(events, maxRepos);
+  // Read commits from the most-recently-pushed repos. The events endpoint no
+  // longer carries commit details, and repos-by-pushed also picks up repos that
+  // just became public without waiting for a fresh public PushEvent.
+  const selected = selectRepos(repos, maxRepos);
   const perRepoCommits = await Promise.all(
-    repos.map((repo) =>
+    selected.map((repo) =>
       getJson(`/repos/${repo}/commits?per_page=${perRepo}`)
         .then(mapRestCommits)
         .catch(() => []),
