@@ -1,4 +1,5 @@
 import type { SiteConfig } from "./types.js";
+import { generatedPosts } from "./posts.generated.js";
 
 // The single source of hand-authored content and settings for the homepage.
 // Edit values here to change what the page says — the render layer never
@@ -77,27 +78,27 @@ export const siteConfig: SiteConfig = {
   },
   work: [
     {
-      name: "Sentinel",
+      name: "PiLedger",
       description:
-        "A Playwright orchestration layer that quarantines flaky specs before " +
-        "they can block a release.",
-      meta: "Node · Playwright · 2024",
-      url: "https://github.com/Charlie-C-1266",
+        "A self-hosted personal-finance dashboard: multi-account tracking, " +
+        "zero-based envelope budgeting and compound-interest savings projections.",
+      meta: "FastAPI · React · 2026",
+      url: "https://github.com/Charlie-C-1266/PiLedger",
       passing: true,
     },
     {
-      name: "pipewatch",
+      name: "PrimAITE",
       description:
-        "A tiny CLI that turns noisy CI logs into a one-line pass / fail " +
-        "digest in Slack.",
-      meta: "Go · CLI · 2023",
-      url: "https://github.com/Charlie-C-1266",
+        "A YAML-configurable simulation environment for training and evaluating " +
+        "reinforcement-learning agents in a primary-level cyber-defence role.",
+      meta: "Python · Gymnasium · 2025",
+      url: "https://github.com/Charlie-C-1266/PrimAITE",
       passing: true,
     },
   ],
-  // Empty until real posts exist — the writing section shows "coming soon".
-  // Add entries of shape { title, blurb, date, readingTime, url } to populate it.
-  posts: [],
+  // Generated from content/blog/*.md at build time (see scripts/blog.mjs).
+  // Empty until a post exists — the writing section then shows "coming soon".
+  posts: generatedPosts,
   footer: {
     prompt: "charlie@testing:~$ ./say-hello.sh",
     titleLines: ["Let's ship something", "that doesn't break."],

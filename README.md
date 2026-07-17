@@ -19,6 +19,7 @@ styles/style.css        Component styles (consume tokens only)
 src/
   types.ts              All domain interfaces (the compile-time contract)
   config.ts             Hand-authored content + settings  ← edit this
+  posts.generated.ts    Blog manifest, generated from content/blog/*.md
   seed.ts               Fallback/first-paint data for the live panels
   dom.ts                Typed element helpers (el, linkTo, multiline…)
   time.ts               relativeTime() for git-log timestamps
@@ -33,11 +34,15 @@ src/
                         work, writing, footer, chrome)
   app.ts                renderPage + mountApp (composition + hydration)
   main.ts               Entry point: builds real deps, calls mountApp
+content/
+  blog/                 Authored posts in Markdown (+ _template.md) ← write here
 scripts/
+  blog.mjs              Build-time blog engine (Markdown → HTML, manifest)
+  build-blog-manifest.mjs  Writes src/posts.generated.ts (runs before tsc)
   build-site.mjs        Assembles the deployable bundle → public/
 tests/
-  unit/                 Vitest (jsdom) — render fns, theme, client, mappers, CSP
-  e2e/                  Playwright — theme, hydration, responsive, a11y
+  unit/                 Vitest (jsdom) — render fns, theme, client, mappers, CSP, blog
+  e2e/                  Playwright — theme, hydration, responsive, a11y, blog
 vercel.json             Build/output settings + security headers (CSP etc.)
 ```
 
@@ -60,6 +65,37 @@ The recent-activity section is **progressively enhanced**:
 > which a static, backend-less site can't make safely, so the heat grid uses the
 > seed pattern. `GitHubClient` is injectable, so wiring a token-backed proxy
 > later is a drop-in change.
+
+## Writing (the blog)
+
+Posts are authored in **Markdown** and rendered to static HTML **at build
+time** — no client-side Markdown, no framework, and the strict CSP is preserved
+(every post reuses the same theme-boot script, so the existing pinned hash
+covers it).
+
+To publish a post:
+
+```bash
+cp content/blog/_template.md content/blog/2026-07-18-my-post.md   # name it <date>-<slug>.md
+$EDITOR content/blog/2026-07-18-my-post.md                        # fill in frontmatter + body
+npm run dev                                                       # build + preview locally
+```
+
+The leading `yyyy-mm-dd-` in the filename is stripped for the URL, so that file
+is served at **`/blog/my-post`**. Files whose name starts with `_` are ignored.
+
+What the build does (`npm run build:site`), in order:
+
+1. `scripts/build-blog-manifest.mjs` reads `content/blog/*.md` and writes
+   `src/posts.generated.ts` — the typed list the homepage **Writing** section
+   and the `/blog` index render from (date + reading time are derived for you).
+2. `tsc` compiles the site (now including the manifest).
+3. `scripts/build-site.mjs` renders each post to `public/blog/<slug>.html` plus
+   a `public/blog/index.html` listing.
+
+Frontmatter fields: `title`, `date` (ISO `yyyy-mm-dd`), `blurb`, optional
+`description` (meta; falls back to `blurb`) and optional `tags`. Post images
+must be self-hosted (the CSP allows same-origin and `data:` images only).
 
 ## Getting started
 
@@ -108,8 +144,8 @@ site. `vercel.json` pins this contract so the dashboard needs no manual setup:
 - **Build Command** `npm run build:site`
 - **Output Directory** `public`
 - **Framework Preset** Other (`"framework": null`)
-- `cleanUrls` is on, so a future `public/blog/my-post.html` serves at
-  `/blog/my-post` — add more pages to the `PAGES` list in `build-site.mjs`.
+- `cleanUrls` is on, so `public/blog/my-post.html` serves at `/blog/my-post`.
+  Blog pages are generated from Markdown — see [Writing](#writing-the-blog).
 
 `vercel.json` also sends security headers on every response: a strict
 **Content-Security-Policy** (scripts limited to same-origin plus the one inline
@@ -141,8 +177,9 @@ Everything below is placeholder content from the design handoff — edit
 - **Featured screenshot** — add `featured.screenshot.src` to swap the striped
   placeholder for a real image of `caniaffordthat.co.uk`.
 - **Projects** — `work[]`.
-- **Writing** — `posts[]` starts empty, so the section shows "coming soon"; add
-  entries (`{ title, blurb, date, readingTime, url }`) to publish real posts.
+- **Writing** — posts are authored as Markdown in `content/blog/` and generated
+  at build time; see [Writing](#writing-the-blog). Remove the sample post
+  (`content/blog/2026-07-17-hello-world.md`) once you publish a real one.
 
 Related: Charlie's portfolio lives at
 <https://charlie-c-1266.github.io/my-portfolio/> and is slated for a restyle to

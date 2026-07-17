@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "build:site": "tsc && node scripts/build-site.mjs",
+    "build:site": "node scripts/build-blog-manifest.mjs && tsc && node scripts/build-site.mjs",
     "watch": "tsc --watch",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
     "serve": "npm run build:site && npx --yes serve public",
@@ -37,6 +37,7 @@
     "@types/node": "^22.10.0",
     "@vitest/coverage-v8": "^4.1.10",
     "jsdom": "^26.0.0",
+    "marked": "^18.0.6",
     "serve": "^14.2.6",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10"

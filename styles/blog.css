@@ -1,0 +1,192 @@
+/*
+ * Blog styles for generated post pages and the /blog index.
+ *
+ * Loaded only by the static pages under /blog (see scripts/blog.mjs). It reads
+ * the same design tokens as the homepage (styles/tokens.css), so posts theme
+ * light/dark with the rest of the site. No inline styles are used anywhere —
+ * the strict CSP forbids them.
+ */
+
+.post-page {
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-display);
+  margin: 0;
+  min-height: 100vh;
+  line-height: 1.65;
+}
+
+/* Top bar with a link home */
+.post-topbar {
+  border-bottom: 1px solid var(--hair);
+  padding: 1.25rem clamp(1.25rem, 5vw, 3rem);
+}
+
+.post-topbar__home {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.post-topbar__home:hover {
+  color: var(--accent);
+}
+
+/* Article column */
+.post {
+  margin: 0 auto;
+  max-width: 46rem;
+  padding: clamp(2rem, 6vw, 4rem) clamp(1.25rem, 5vw, 3rem) 5rem;
+}
+
+.post__eyebrow {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  margin: 0 0 0.75rem;
+}
+
+.post__title {
+  font-size: clamp(1.9rem, 5vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0 0 0.6rem;
+}
+
+.post__meta {
+  color: var(--muted2);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  margin: 0 0 2.5rem;
+}
+
+/* Rendered Markdown body */
+.post__article > h2 {
+  font-size: 1.5rem;
+  margin: 2.5rem 0 0.75rem;
+}
+
+.post__article > h3 {
+  font-size: 1.2rem;
+  margin: 2rem 0 0.5rem;
+}
+
+.post__article > p {
+  margin: 0 0 1.25rem;
+}
+
+.post__article a {
+  color: var(--astrong);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.post__article ul,
+.post__article ol {
+  margin: 0 0 1.25rem;
+  padding-left: 1.4rem;
+}
+
+.post__article li {
+  margin: 0.35rem 0;
+}
+
+.post__article blockquote {
+  border-left: 3px solid var(--accent);
+  color: var(--muted);
+  margin: 1.5rem 0;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+}
+
+.post__article code {
+  background: var(--s2);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  padding: 0.12em 0.4em;
+}
+
+.post__article pre {
+  background: var(--s2);
+  border: 1px solid var(--hair);
+  border-radius: 8px;
+  margin: 0 0 1.5rem;
+  overflow-x: auto;
+  padding: 1rem 1.15rem;
+}
+
+.post__article pre code {
+  background: none;
+  font-size: 0.85rem;
+  padding: 0;
+}
+
+.post__article img {
+  border-radius: 8px;
+  max-width: 100%;
+}
+
+.post__back {
+  border-top: 1px solid var(--hair);
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+}
+
+.post__back a {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.post__back a:hover {
+  color: var(--accent);
+}
+
+/* /blog index list */
+.post-list {
+  border-top: 1px solid var(--hair);
+  margin-top: 2rem;
+}
+
+.post-list__item {
+  border-bottom: 1px solid var(--hair);
+  color: inherit;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: space-between;
+  padding: 1.4rem 0;
+  text-decoration: none;
+}
+
+.post-list__item:hover .post-list__title {
+  color: var(--accent);
+}
+
+.post-list__title {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.post-list__blurb {
+  color: var(--muted);
+  display: block;
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+}
+
+.post-list__meta {
+  color: var(--muted2);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.post-list__empty {
+  color: var(--muted);
+  padding: 1.5rem 0;
+}
