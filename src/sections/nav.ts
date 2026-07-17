@@ -1,0 +1,56 @@
+import { el } from "../dom.js";
+import type { Identity, SiteConfig } from "../types.js";
+
+/** Brand wordmark: `testingcharlie` + faint `.co.uk` + blinking cursor. */
+export function renderBrand(identity: Identity): HTMLElement {
+  return el("span", {
+    class: "nav__brand",
+    children: [
+      identity.brand,
+      el("span", { class: "nav__brand-tld", text: identity.brandTld }),
+      el("span", { class: "nav__cursor", text: "_", attrs: { "aria-hidden": "true" } }),
+    ],
+  });
+}
+
+/** The theme toggle button. Its label/state is managed by ThemeController. */
+export function renderThemeToggle(): HTMLButtonElement {
+  return el("button", {
+    class: "theme-toggle",
+    text: "☾ dark",
+    attrs: {
+      type: "button",
+      "data-testid": "theme-toggle",
+      "aria-label": "Switch to dark theme",
+      "aria-pressed": "false",
+    },
+  });
+}
+
+/** Nav bar (section 1): brand on the left, status + links + toggle + contact. */
+export function renderNav(config: SiteConfig): HTMLElement {
+  const { identity, nav, buildStatus } = config;
+
+  const status = el("span", {
+    class: "status",
+    children: [el("span", { class: "status-dot", attrs: { "aria-hidden": "true" } }), buildStatus],
+  });
+
+  const links = nav.map((item) =>
+    el("a", { class: "nav__link", text: item.label, attrs: { href: item.href } }),
+  );
+
+  const contact = el("a", {
+    class: "chip",
+    text: "get in touch",
+    attrs: { href: `mailto:${identity.email}` },
+  });
+
+  const right = el("nav", {
+    class: "nav__links",
+    attrs: { "aria-label": "Primary" },
+    children: [status, ...links, renderThemeToggle(), contact],
+  });
+
+  return el("header", { class: "nav", children: [renderBrand(identity), right] });
+}

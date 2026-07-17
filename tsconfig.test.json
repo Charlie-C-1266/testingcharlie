@@ -1,0 +1,20 @@
+{
+  // Type-checks the test suites and tooling config alongside the source, so
+  // `npm run typecheck` catches mistakes in tests too. It never emits — the
+  // production build is driven exclusively by the base tsconfig.json.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    // Tests and tooling configs run under Node, so pull in @types/node here
+    // (kept out of the browser build, which stays DOM-only).
+    "types": ["node"]
+  },
+  // Tooling configs (vitest/playwright) are validated by running the tools
+  // themselves; they lean on bundler-only types that tsc doesn't model, so
+  // they are intentionally excluded from the strict type-check here.
+  "include": ["src", "tests/unit"]
+}

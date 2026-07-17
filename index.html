@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>testingcharlie — Charlie · Senior Test Engineer</title>
+    <meta
+      name="description"
+      content="Bristol-based senior test engineer building the automation, pipelines and frameworks that let teams ship fast — without shipping bugs."
+    />
+    <meta name="color-scheme" content="light dark" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/style.css" />
+
+    <!--
+      Apply the saved (or preferred) theme before first paint to avoid a flash.
+      The typed ThemeController takes over once dist/main.js loads; this keeps
+      the storage key in sync with THEME_STORAGE_KEY in src/theme.ts.
+    -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("tc-theme");
+          if (stored !== "light" && stored !== "dark") {
+            stored =
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+          }
+          document.documentElement.setAttribute("data-theme", stored);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#about">Skip to content</a>
+    <div id="app"></div>
+    <noscript>
+      <p style="max-width: 640px; margin: 44px auto; padding: 0 24px; font-family: sans-serif">
+        This site renders its content with JavaScript. Please enable it, or find
+        Charlie on
+        <a href="https://github.com/Charlie-C-1266">GitHub</a>.
+      </p>
+    </noscript>
+    <script type="module" src="dist/main.js"></script>
+  </body>
+</html>

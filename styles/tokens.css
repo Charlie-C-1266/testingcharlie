@@ -1,0 +1,117 @@
+/*
+ * Design tokens for testingcharlie.co.uk.
+ *
+ * Every colour, from the design handoff, lives here as a CSS custom property.
+ * Light is the default (:root); dark overrides the same names under
+ * [data-theme="dark"]. Because every component reads these variables, flipping
+ * the theme attribute re-themes the whole page instantly.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces & text */
+  --page: #f3f2ec;
+  --surface: #faf9f4;
+  --s2: #f3f2ec;
+  --ink: #181a1b;
+  --muted: #4a4d4a;
+  --muted2: #8a8d86;
+  --faint: #9a9d96;
+
+  /* Hairlines */
+  --hair: rgba(20, 22, 20, 0.1);
+  --hair2: rgba(20, 22, 20, 0.09);
+
+  /* Accent bands (marquee, footer) */
+  --band: #181a1b;
+  --bandink: #f3f2ec;
+
+  /* Chrome / terminal header bars */
+  --chrome: #e9e8e1;
+
+  /* Screenshot placeholder stripes */
+  --stripea: #ecebe4;
+  --stripeb: #e4e3db;
+
+  /* Signal greens */
+  --accent: #46a06e;
+  --astrong: #2f7550;
+
+  /* Contact / CTA chip */
+  --chipink: #1f5439;
+  --chipbg: rgba(31, 84, 57, 0.07);
+  --chipbd: rgba(31, 84, 57, 0.3);
+  --chiphbg: #1f5439;
+  --chiphink: #f3f2ec;
+
+  /* "Passing" pill */
+  --passbg: rgba(70, 160, 110, 0.1);
+  --passink: #2f7550;
+  --passbd: rgba(70, 160, 110, 0.25);
+
+  /* GitHub contribution grid */
+  --cellempty: rgba(20, 22, 20, 0.08);
+  --heat1: rgba(92, 191, 136, 0.22);
+  --heat2: rgba(92, 191, 136, 0.4);
+  --heat3: rgba(92, 191, 136, 0.62);
+  --heat4: rgba(92, 191, 136, 0.85);
+
+  /* Fixed colours — always used on the dark accent bands, theme-independent */
+  --dot-red: #ff5f57;
+  --dot-amber: #febc2e;
+  --dot-green: #28c840;
+  --band-green: #5cbf88;
+  --band-green-hover: #7dd6a3;
+  --band-muted: #a8ada9;
+  --band-msg: #c9cdc8;
+  --band-time: #7f847e;
+
+  /* Typography */
+  --font-display: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", "Menlo", monospace;
+
+  /* Layout */
+  --max-width: 1180px;
+
+  /* Motion */
+  --ease-entrance: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --page: #15171a;
+  --surface: #1c1f22;
+  --s2: #202428;
+  --ink: #e8eae7;
+  --muted: #b4b8b2;
+  --muted2: #868b85;
+  --faint: #6f746e;
+
+  --hair: rgba(255, 255, 255, 0.09);
+  --hair2: rgba(255, 255, 255, 0.06);
+
+  --band: #11201a;
+  --bandink: #e6efe8;
+
+  --chrome: #1d2622;
+
+  --stripea: #232b26;
+  --stripeb: #1b221d;
+
+  --accent: #5cbf88;
+  --astrong: #8ce0ac;
+
+  --chipink: #93e2b1;
+  --chipbg: rgba(47, 117, 80, 0.22);
+  --chipbd: rgba(92, 191, 136, 0.34);
+  --chiphbg: #2f7550;
+  --chiphink: #eafff1;
+
+  --passbg: rgba(92, 191, 136, 0.14);
+  --passink: #8ce0ac;
+  --passbd: rgba(92, 191, 136, 0.3);
+
+  --cellempty: rgba(255, 255, 255, 0.07);
+}

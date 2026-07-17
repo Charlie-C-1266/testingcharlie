@@ -1,0 +1,106 @@
+import type { SiteConfig } from "./types.js";
+
+// The single source of hand-authored content and settings for the homepage.
+// Edit values here to change what the page says — the render layer never
+// hard-codes copy. Placeholders from the design handoff are marked below and
+// should be swapped for Charlie's real content over time.
+export const siteConfig: SiteConfig = {
+  identity: {
+    brand: "testingcharlie",
+    brandTld: ".co.uk",
+    email: "hello@testingcharlie.co.uk",
+    // Real GitHub account, used for the live API calls.
+    githubUsername: "Charlie-C-1266",
+    // Display handle shown in the GitHub panel (branding, not the API login).
+    githubHandle: "@testingcharlie",
+    githubUrl: "https://github.com/Charlie-C-1266",
+    shellUser: "charlie",
+    shellHost: "testing",
+  },
+  nav: [
+    { label: "work", href: "#work" },
+    { label: "writing", href: "#writing" },
+    { label: "about", href: "#about" },
+  ],
+  socials: [
+    { label: "GitHub", href: "https://github.com/Charlie-C-1266" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/" }, // TODO: real profile.
+  ],
+  buildStatus: "build: passing",
+  hero: {
+    kicker: "Charlie — Senior Test Engineer · Automation & DevOps",
+    titleLines: ["I break things", "so users don't"],
+    lead:
+      "Bristol-based test engineer building the automation, pipelines and " +
+      "frameworks that let teams ship fast — without shipping bugs.",
+    chips: [
+      { label: "GitHub ↗", href: "https://github.com/Charlie-C-1266" },
+      { label: "Portfolio ↗", href: "https://charlie-c-1266.github.io/my-portfolio/" },
+      { label: "hello@testingcharlie.co.uk", href: "mailto:hello@testingcharlie.co.uk" },
+    ],
+  },
+  pipeline: {
+    stages: ["build", "lint", "test", "deploy"],
+    stats: [
+      { value: "214", label: "tests" },
+      { value: "96%", label: "coverage" },
+      { value: "0.2%", label: "flake rate", emphasis: true },
+    ],
+  },
+  marqueeKeywords: [
+    "playwright",
+    "pytest",
+    "CI/CD",
+    "flaky-test triage",
+    "contract testing",
+    "load testing",
+    "observability",
+    "shift-left",
+  ],
+  featured: {
+    prompt: "$ ~/featured",
+    titleLines: ["caniaffordthat", ".co.uk"],
+    url: "https://www.caniaffordthat.co.uk",
+    urlLabel: "caniaffordthat.co.uk",
+    ciLabel: "CI passing",
+    body:
+      "A no-nonsense budgeting tool that answers one question: can I afford " +
+      "this, right now? Built for speed, honesty and zero faff.",
+    pills: ["214 tests", "96% coverage", "0 flakes"],
+    actionLabel: "View project →",
+    meta: "React · TypeScript · 2025",
+    // No `src` yet → the striped placeholder is shown. Add a real screenshot URL.
+    screenshot: {
+      alt: "Screenshot of the caniaffordthat.co.uk budgeting app",
+      placeholder: "screenshot — caniaffordthat.co.uk",
+    },
+  },
+  work: [
+    {
+      name: "Sentinel",
+      description:
+        "A Playwright orchestration layer that quarantines flaky specs before " +
+        "they can block a release.",
+      meta: "Node · Playwright · 2024",
+      url: "https://github.com/Charlie-C-1266",
+      passing: true,
+    },
+    {
+      name: "pipewatch",
+      description:
+        "A tiny CLI that turns noisy CI logs into a one-line pass / fail " +
+        "digest in Slack.",
+      meta: "Go · CLI · 2023",
+      url: "https://github.com/Charlie-C-1266",
+      passing: true,
+    },
+  ],
+  // Empty until real posts exist — the writing section shows "coming soon".
+  // Add entries of shape { title, blurb, date, readingTime, url } to populate it.
+  posts: [],
+  footer: {
+    prompt: "charlie@testing:~$ ./say-hello.sh",
+    titleLines: ["Let's ship something", "that doesn't break."],
+    email: "hello@testingcharlie.co.uk",
+  },
+};
