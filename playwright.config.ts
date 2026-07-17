@@ -26,7 +26,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `npm run build && npx --yes serve . -l ${PORT} --no-clipboard`,
+    command: `npm run build && npx serve . -l ${PORT} --no-clipboard`,
     url: BASE_URL,
     // Always launch (and tear down) a fresh server so the suite can never bind
     // to an unrelated process that happens to hold the port.

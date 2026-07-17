@@ -36,6 +36,7 @@
     "@types/node": "^22.10.0",
     "@vitest/coverage-v8": "^4.1.10",
     "jsdom": "^26.0.0",
+    "serve": "^14.2.6",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10"
   }

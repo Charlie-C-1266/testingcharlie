@@ -1,0 +1,58 @@
+name: CI
+
+# Runs the same gates as local development:
+#   - check: typecheck (src + tests) → unit tests w/ 95% coverage gate → build
+#   - e2e:   Playwright across desktop + mobile
+#
+# Linting to the Google TypeScript Style Guide (gts / typescript-eslint) is
+# intentionally deferred: those tools depend on the classic TypeScript JS
+# compiler API, which the TS 7 native-port build used here does not expose, and
+# they pin `typescript < 6.1`. Revisit once typescript-eslint supports TS 7.
+# In the meantime tsc's strict flags (see tsconfig.json) do the type-level gate.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Typecheck · unit + coverage · build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+
+  e2e:
+    name: End-to-end (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
