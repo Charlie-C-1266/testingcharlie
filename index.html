@@ -53,5 +53,13 @@
       </p>
     </noscript>
     <script type="module" src="dist/main.js"></script>
+    <!--
+      Vercel Web Analytics. Vercel serves this script and its beacon endpoints
+      from the same origin under /_vercel/insights/*, so the strict CSP allows
+      it via script-src/connect-src 'self' with no change. It 404s harmlessly in
+      local `serve`/e2e (the endpoint only exists on Vercel with Web Analytics
+      enabled for the project).
+    -->
+    <script defer src="/_vercel/insights/script.js"></script>
   </body>
 </html>
