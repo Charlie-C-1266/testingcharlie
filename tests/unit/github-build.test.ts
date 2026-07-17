@@ -4,10 +4,10 @@ import { describe, expect, it } from "vitest";
 import {
   buildRecentCommits,
   calendarCells,
-  distinctPushedRepos,
   levelFromContribution,
   mapRestCommits,
   relativeTime,
+  selectRepos,
 } from "../../scripts/github.mjs";
 
 describe("relativeTime", () => {
@@ -21,16 +21,16 @@ describe("relativeTime", () => {
   });
 });
 
-describe("distinctPushedRepos", () => {
-  it("returns unique repos of push events, newest first, capped", () => {
-    const events = [
-      { type: "PushEvent", repo: { name: "a/one" } },
-      { type: "WatchEvent", repo: { name: "a/two" } },
-      { type: "PushEvent", repo: { name: "a/one" } },
-      { type: "PushEvent", repo: { name: "a/three" } },
-      { type: "PushEvent", repo: { name: "a/four" } },
+describe("selectRepos", () => {
+  it("keeps own, non-fork, non-archived repos in order, capped", () => {
+    const repos = [
+      { full_name: "a/one", fork: false, archived: false },
+      { full_name: "a/afork", fork: true, archived: false },
+      { full_name: "a/arch", fork: false, archived: true },
+      { full_name: "a/two", fork: false, archived: false },
+      { full_name: "a/three", fork: false, archived: false },
     ];
-    expect(distinctPushedRepos(events, 2)).toEqual(["a/one", "a/three"]);
+    expect(selectRepos(repos, 2)).toEqual(["a/one", "a/two"]);
   });
 });
 

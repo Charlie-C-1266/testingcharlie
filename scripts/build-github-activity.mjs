@@ -52,7 +52,7 @@ async function main() {
 
   let publicActivity;
   try {
-    publicActivity = await fetchPublicActivity(LOGIN);
+    publicActivity = await fetchPublicActivity(LOGIN, { token });
   } catch (error) {
     console.warn(`⚠ Skipping GitHub activity bake (public fetch failed: ${error.message}). Keeping committed file.`);
     return;
