@@ -87,6 +87,13 @@ button {
   top: 12px;
 }
 
+.noscript-note {
+  max-width: 640px;
+  margin: 44px auto;
+  padding: 0 24px;
+  font-family: sans-serif;
+}
+
 /* ------------------------------------------------------------- utilities -- */
 
 .app {

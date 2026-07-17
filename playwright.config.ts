@@ -3,8 +3,9 @@ import { defineConfig, devices } from "@playwright/test";
 const PORT = 4187;
 const BASE_URL = `http://localhost:${PORT}`;
 
-// Builds the TypeScript to dist/ then serves the static site on a fixed port.
-// Playwright waits for it to come up before running the suite.
+// Assembles the deployable static site (public/) then serves it on a fixed
+// port — the same artifact Vercel ships, so the e2e suite exercises exactly
+// what users get. Playwright waits for it to come up before running the suite.
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
@@ -26,7 +27,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `npm run build && npx serve . -l ${PORT} --no-clipboard`,
+    command: `npm run build:site && npx serve public -l ${PORT} --no-clipboard`,
     url: BASE_URL,
     // Always launch (and tear down) a fresh server so the suite can never bind
     // to an unrelated process that happens to hold the port.

@@ -5,16 +5,17 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "build:site": "tsc && node scripts/build-site.mjs",
     "watch": "tsc --watch",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
-    "serve": "npx --yes serve .",
-    "dev": "tsc && npx --yes serve .",
+    "serve": "npm run build:site && npx --yes serve public",
+    "dev": "npm run build:site && npx --yes serve public",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "check": "npm run typecheck && npm run coverage && npm run build"
+    "check": "npm run typecheck && npm run coverage && npm run build:site"
   },
   "repository": {
     "type": "git",

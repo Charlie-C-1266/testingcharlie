@@ -33,9 +33,12 @@ src/
                         work, writing, footer, chrome)
   app.ts                renderPage + mountApp (composition + hydration)
   main.ts               Entry point: builds real deps, calls mountApp
+scripts/
+  build-site.mjs        Assembles the deployable bundle → public/
 tests/
-  unit/                 Vitest (jsdom) — render fns, theme, client, mappers
+  unit/                 Vitest (jsdom) — render fns, theme, client, mappers, CSP
   e2e/                  Playwright — theme, hydration, responsive, a11y
+vercel.json             Build/output settings + security headers (CSP etc.)
 ```
 
 Each render function is pure — it takes typed data and returns a detached
@@ -81,6 +84,43 @@ npm run check        # typecheck + coverage + build, all in one
 ```
 
 First-time Playwright setup needs a browser: `npx playwright install chromium`.
+
+## Deployment
+
+The site deploys to [Vercel](https://vercel.com) as a plain static site — there
+is no framework preset and no server.
+
+`npm run build:site` compiles the TypeScript and then runs
+`scripts/build-site.mjs`, which assembles a **`public/`** directory containing
+*only* what the browser needs:
+
+```
+public/
+  index.html
+  styles/*.css
+  dist/**/*.js      compiled modules only — no .ts, .d.ts or source maps
+```
+
+Nothing else from the repo (`src/`, `tests/`, tooling configs, `package.json`,
+`node_modules`) is copied in, so none of it is reachable as a URL on the live
+site. `vercel.json` pins this contract so the dashboard needs no manual setup:
+
+- **Build Command** `npm run build:site`
+- **Output Directory** `public`
+- **Framework Preset** Other (`"framework": null`)
+- `cleanUrls` is on, so a future `public/blog/my-post.html` serves at
+  `/blog/my-post` — add more pages to the `PAGES` list in `build-site.mjs`.
+
+`vercel.json` also sends security headers on every response: a strict
+**Content-Security-Policy** (scripts limited to same-origin plus the one inline
+boot script, pinned by sha256 hash; connections limited to the GitHub API;
+fonts to Google Fonts), plus `X-Content-Type-Options`, `X-Frame-Options`,
+`Referrer-Policy`, `Strict-Transport-Security` and `Permissions-Policy`. A unit
+test (`tests/unit/csp.test.ts`) keeps the pinned script hash in sync with
+`index.html`, so the policy can never silently start blocking the page.
+
+The Playwright suite serves this same `public/` bundle, so the e2e tests
+exercise exactly what Vercel ships.
 
 ## Theming
 
