@@ -37,8 +37,8 @@ export const siteConfig: SiteConfig = {
     kicker: "Charlie — Senior Test Engineer · Automation & DevOps",
     titleLines: ["I break things", "so users don't"],
     lead:
-      "Bristol-based test engineer building the automation, pipelines and " +
-      "frameworks that let teams ship fast — without shipping bugs.",
+      "Bristol-based senior test engineer building the automation, pipelines " +
+      "and frameworks that let teams ship fast — without shipping bugs.",
     chips: [
       { label: "GitHub ↗", href: "https://github.com/Charlie-C-1266" },
       { label: "Portfolio ↗", href: "https://charlie-c-1266.github.io/my-portfolio/" },

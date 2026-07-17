@@ -38,7 +38,7 @@ test.describe("homepage", () => {
     await expect(page).toHaveTitle(/testingcharlie/);
     await expect(page.locator('head > meta[name="description"]')).toHaveAttribute(
       "content",
-      /^Bristol-based test engineer building/,
+      /^Bristol-based senior test engineer building/,
     );
   });
 
