@@ -78,21 +78,21 @@ export const siteConfig: SiteConfig = {
   },
   work: [
     {
-      name: "Sentinel",
+      name: "PiLedger",
       description:
-        "A Playwright orchestration layer that quarantines flaky specs before " +
-        "they can block a release.",
-      meta: "Node · Playwright · 2024",
-      url: "https://github.com/Charlie-C-1266",
+        "A self-hosted personal-finance dashboard: multi-account tracking, " +
+        "zero-based envelope budgeting and compound-interest savings projections.",
+      meta: "FastAPI · React · 2026",
+      url: "https://github.com/Charlie-C-1266/PiLedger",
       passing: true,
     },
     {
-      name: "pipewatch",
+      name: "PrimAITE",
       description:
-        "A tiny CLI that turns noisy CI logs into a one-line pass / fail " +
-        "digest in Slack.",
-      meta: "Go · CLI · 2023",
-      url: "https://github.com/Charlie-C-1266",
+        "A YAML-configurable simulation environment for training and evaluating " +
+        "reinforcement-learning agents in a primary-level cyber-defence role.",
+      meta: "Python · Gymnasium · 2025",
+      url: "https://github.com/Charlie-C-1266/PrimAITE",
       passing: true,
     },
   ],
