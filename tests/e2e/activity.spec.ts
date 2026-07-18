@@ -23,13 +23,23 @@ test.describe("recent activity", () => {
     await expect(page.getByTestId("github-caption")).toContainText("repos");
   });
 
-  test("renders the real, build-baked contribution grid", async ({ page }) => {
+  test("renders a contribution grid that mirrors the baked calendar, never a placeholder", async ({ page }) => {
     await failGitHub(page);
     await page.goto("/");
-    // The grid is populated from real baked contribution data (or collapsed when
-    // none is baked) — never the old fixed placeholder pattern.
-    const cells = page.getByTestId("heatmap").locator(".heatmap__cell");
-    await expect(cells.first()).toBeVisible();
-    expect(await cells.count()).toBeGreaterThan(0);
+    const heatmap = page.getByTestId("heatmap");
+    const cells = heatmap.locator(".heatmap__cell");
+    // Invariant (holds in both states, so the test survives a tokenless bake):
+    // the grid reflects the REAL baked calendar — it either collapses to zero
+    // cells (nothing baked) or renders one cell per real day; it is never the old
+    // fixed fabricated placeholder pattern. The `heatmap--empty` class and the
+    // cell count must agree, and populated cells carry a real "<n> on <date>".
+    const isEmpty = await heatmap.evaluate((el) => el.classList.contains("heatmap--empty"));
+    if (isEmpty) {
+      expect(await cells.count()).toBe(0);
+    } else {
+      expect(await cells.count()).toBeGreaterThan(0);
+      await expect(cells.first()).toBeVisible();
+      await expect(cells.first()).toHaveAttribute("title", /on \d{4}-\d{2}-\d{2}$/);
+    }
   });
 });

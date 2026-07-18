@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { THEME_STORAGE_KEY } from "../../src/theme.js";
 
 // The deployed Content-Security-Policy (vercel.json) allows the single inline
 // boot script in index.html by its sha256 hash, not 'unsafe-inline'. If either
@@ -40,6 +41,13 @@ describe("Content-Security-Policy", () => {
   it("pins the exact hash of the inline boot script", () => {
     const digest = createHash("sha256").update(inlineBootScript(), "utf8").digest("base64");
     expect(pinnedScriptHash()).toBe(`sha256-${digest}`);
+  });
+
+  it("keeps the boot script's storage key in sync with THEME_STORAGE_KEY", () => {
+    // The pre-paint script can't import a module, so the key is a literal here.
+    // This enforces the single source of truth: index.html must use the exact
+    // key src/theme.ts defines, or theme persistence silently splits in two.
+    expect(inlineBootScript()).toContain(`"${THEME_STORAGE_KEY}"`);
   });
 
   it("does not rely on 'unsafe-inline' for scripts or styles", () => {

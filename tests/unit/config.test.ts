@@ -10,6 +10,13 @@ describe("siteConfig", () => {
     expect(identity.githubUrl).toMatch(/^https:\/\/github\.com\//);
   });
 
+  it("carries an SEO title; the meta description falls back to the hero brief", () => {
+    // The build injects these into index.html — keep them the single source.
+    expect(siteConfig.seo.title).toBeTruthy();
+    // description is intentionally omitted so the brief lives only in hero.lead.
+    expect(siteConfig.seo.description ?? siteConfig.hero.lead).toContain("Bristol");
+  });
+
   it("has the eight-section content wired up", () => {
     expect(siteConfig.nav.length).toBeGreaterThan(0);
     expect(siteConfig.pipeline.stages).toContain("build");

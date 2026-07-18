@@ -32,6 +32,16 @@ test.describe("homepage", () => {
     await expect(pipeline.locator(".pass")).toHaveCount(4);
   });
 
+  test("bakes the SEO title + description into the served head from config", async ({ page }) => {
+    // Proves the __SEO_*__ placeholders were replaced at build with the real
+    // config values — the head is no longer a second hard-coded copy.
+    await expect(page).toHaveTitle(/testingcharlie/);
+    await expect(page.locator('head > meta[name="description"]')).toHaveAttribute(
+      "content",
+      /^Bristol-based senior test engineer building/,
+    );
+  });
+
   test("has working section anchor links in the nav", async ({ page }) => {
     await expect(page.locator(".nav__link", { hasText: "work" })).toHaveAttribute("href", "#work");
     await expect(page.locator(".nav__link", { hasText: "writing" })).toHaveAttribute("href", "#writing");

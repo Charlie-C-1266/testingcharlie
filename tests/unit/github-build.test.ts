@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildRecentCommits,
   calendarCells,
+  fetchPublicActivity,
   levelFromContribution,
   mapRestCommits,
   relativeTime,
@@ -93,5 +94,86 @@ describe("calendarCells", () => {
     ];
     const cells = calendarCells(weeks, 1); // keep only the last week
     expect(cells).toEqual([{ level: 3, count: 7, date: "2026-07-01" }]);
+  });
+});
+
+describe("fetchPublicActivity", () => {
+  const now = new Date("2026-07-17T12:00:00Z");
+  const baseUrl = "https://api.test";
+
+  // A private repo sits between two public ones to prove it never reaches the
+  // /commits stage — the security guarantee an authenticated build depends on.
+  const repos = [
+    { full_name: "me/public-new", fork: false, archived: false, private: false },
+    { full_name: "me/secret", fork: false, archived: false, private: true },
+    { full_name: "me/public-old", fork: false, archived: false, private: false },
+  ];
+  const user = { login: "me", html_url: "https://github.com/me", public_repos: 12, name: "Me" };
+  const commitsByRepo: Record<string, unknown[]> = {
+    "me/public-new": [
+      {
+        sha: "newsha0001",
+        html_url: "https://github.com/me/public-new/commit/newsha0001",
+        parents: [{}],
+        commit: { message: "newer\n\nbody", author: { date: "2026-07-16T00:00:00Z" } },
+      },
+    ],
+    "me/public-old": [
+      {
+        sha: "oldsha0002",
+        html_url: "https://github.com/me/public-old/commit/oldsha0002",
+        parents: [{}],
+        commit: { message: "older", author: { date: "2026-07-10T00:00:00Z" } },
+      },
+    ],
+  };
+
+  /** A fetch that records every request's URL + headers and serves fixtures by path. */
+  function recordingFetch(): { fetchImpl: typeof fetch; calls: { url: string; headers: Record<string, string> }[] } {
+    const calls: { url: string; headers: Record<string, string> }[] = [];
+    const fetchImpl = (async (url: string, init: { headers?: Record<string, string> } = {}) => {
+      calls.push({ url, headers: init.headers ?? {} });
+      const repo = url.match(/\/repos\/([^/]+\/[^/]+)\/commits/)?.[1] ?? "";
+      const body = url.includes("/commits") ? (commitsByRepo[repo] ?? []) : url.includes("/repos?") ? repos : user;
+      return { ok: true, status: 200, json: async () => body };
+    }) as unknown as typeof fetch;
+    return { fetchImpl, calls };
+  }
+
+  it("authenticates every REST call and returns real public activity when a token is set", async () => {
+    const { fetchImpl, calls } = recordingFetch();
+    const result = await fetchPublicActivity("me", { fetch: fetchImpl, baseUrl, now, token: "secret-pat" });
+
+    // Every request carries the bearer token (lifts the 60/hr anonymous limit).
+    expect(calls.length).toBeGreaterThan(0);
+    for (const call of calls) {
+      expect(call.headers.Authorization).toBe("bearer secret-pat");
+    }
+    // Repos are picked from the pushed-sorted repos endpoint (not the events feed).
+    expect(calls[0]?.url).toContain("/users/me/repos?sort=pushed");
+    // Commits come back merged + newest-first, from the public repos only.
+    expect(result.commits.map((c: { message: string }) => c.message)).toEqual(["newer", "older"]);
+    expect(result.publicRepoCount).toBe(12);
+    expect(result.profileUrl).toBe("https://github.com/me");
+  });
+
+  it("never fetches commits from a private repo, even on an authenticated build", async () => {
+    const { fetchImpl, calls } = recordingFetch();
+    await fetchPublicActivity("me", { fetch: fetchImpl, baseUrl, now, token: "secret-pat" });
+
+    // selectRepos drops the private repo, so its /commits endpoint is never hit.
+    expect(calls.some((c) => c.url.includes("me/secret"))).toBe(false);
+    expect(calls.some((c) => c.url.includes("me/public-new/commits"))).toBe(true);
+    expect(calls.some((c) => c.url.includes("me/public-old/commits"))).toBe(true);
+  });
+
+  it("sends no Authorization header when no token is provided", async () => {
+    const { fetchImpl, calls } = recordingFetch();
+    await fetchPublicActivity("me", { fetch: fetchImpl, baseUrl, now });
+
+    expect(calls.length).toBeGreaterThan(0);
+    for (const call of calls) {
+      expect(call.headers.Authorization).toBeUndefined();
+    }
   });
 });

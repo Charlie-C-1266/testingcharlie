@@ -22,7 +22,12 @@ import {
 } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+// Built from src/ by `tsc` (which runs before this script in `build:site`), so
+// the shipped page derives its SEO copy from the same typed config the app
+// uses — never a second hard-coded copy in index.html.
+import { siteConfig } from "../dist/config.js";
 import { loadPosts, renderBlogIndex, renderPostPage } from "./blog.mjs";
+import { applyTemplate, escapeHtml } from "./html-template.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const out = join(root, "public");
@@ -35,10 +40,21 @@ async function copyStyles() {
   await cp(join(root, "styles"), join(out, "styles"), { recursive: true });
 }
 
-/** Copy each published page to the output root. */
+/** Placeholder values injected into the HTML shell — see scripts/html-template.mjs. */
+function pageTokens() {
+  return {
+    SEO_TITLE: escapeHtml(siteConfig.seo.title),
+    // The brief is authored once as hero.lead; SEO reuses it unless overridden.
+    SEO_DESCRIPTION: escapeHtml(siteConfig.seo.description ?? siteConfig.hero.lead),
+  };
+}
+
+/** Fill each published page's `__TOKEN__` placeholders and write it to the output root. */
 async function copyPages() {
+  const tokens = pageTokens();
   for (const page of PAGES) {
-    await cp(join(root, page), join(out, page));
+    const shell = await readFile(join(root, page), "utf8");
+    await writeFile(join(out, page), applyTemplate(shell, tokens));
   }
 }
 
