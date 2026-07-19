@@ -14,15 +14,15 @@ describe("renderStat", () => {
 
 describe("renderPipeline", () => {
   it("renders one pass pill per stage with separators between", () => {
-    const panel = renderPipeline(siteConfig.pipeline);
+    const panel = renderPipeline(siteConfig.pipeline, siteConfig.ui);
     const stages = siteConfig.pipeline.stages;
     expect(panel.querySelectorAll(".pipeline__stages .pass")).toHaveLength(stages.length);
     expect(panel.querySelectorAll(".pipeline__sep")).toHaveLength(stages.length - 1);
-    expect(panel.querySelector(".pipeline__head")?.textContent).toContain("ci/cd pipeline");
+    expect(panel.querySelector(".pipeline__head")?.textContent).toContain(siteConfig.ui.pipeline.title);
   });
 
   it("renders every stat cell", () => {
-    const panel = renderPipeline(siteConfig.pipeline);
+    const panel = renderPipeline(siteConfig.pipeline, siteConfig.ui);
     expect(panel.querySelectorAll(".pipeline__stats .stat")).toHaveLength(siteConfig.pipeline.stats.length);
   });
 });

@@ -20,8 +20,8 @@ export function renderPage(config: SiteConfig, data: ActivityData): HTMLElement[
     renderMarquee(config.marqueeKeywords),
     renderFeatured(config.featured),
     renderActivity(config, data),
-    renderWork(config.work),
-    renderWriting(config.posts),
+    renderWork(config.work, config.ui),
+    renderWriting(config.posts, config.ui),
     renderFooter(config),
   ];
 }

@@ -34,6 +34,6 @@ export function renderHero(config: SiteConfig): HTMLElement {
   return el("section", {
     class: "hero",
     attrs: { id: "about", "aria-label": "Introduction" },
-    children: [left, renderPipeline(pipeline)],
+    children: [left, renderPipeline(pipeline, config.ui)],
   });
 }

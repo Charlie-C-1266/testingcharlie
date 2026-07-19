@@ -1,10 +1,12 @@
-import type { Theme } from "./types.js";
+import type { Theme, ThemeToggleLabels } from "./types.js";
 
 /** localStorage key holding the user's explicit theme choice. */
 export const THEME_STORAGE_KEY = "tc-theme";
 
 /** Dependencies for {@link ThemeController}, all injectable for testing. */
 export interface ThemeControllerOptions {
+  /** Button labels for each theme state (authored in siteConfig.ui.themeToggle). */
+  labels: ThemeToggleLabels;
   /** Element carrying the `data-theme` attribute (default: <html>). */
   root?: HTMLElement;
   /** Persistence for the chosen theme (default: window.localStorage). */
@@ -34,9 +36,9 @@ function defaultMedia(): MediaQueryList | undefined {
   return undefined;
 }
 
-/** Label + accessible name for the toggle, describing the action it performs. */
-export function toggleLabel(theme: Theme): string {
-  return theme === "dark" ? "☀ light" : "☾ dark";
+/** Visible label for the toggle in a given theme, describing the action it performs. */
+export function toggleLabel(theme: Theme, labels: ThemeToggleLabels): string {
+  return theme === "dark" ? labels.toLight : labels.toDark;
 }
 
 /**
@@ -48,10 +50,12 @@ export class ThemeController {
   private readonly root: HTMLElement;
   private readonly storage: Storage | undefined;
   private readonly media: MediaQueryList | undefined;
+  private readonly labels: ThemeToggleLabels;
   private readonly toggles = new Set<HTMLButtonElement>();
   private current: Theme = "light";
 
-  constructor(options: ThemeControllerOptions = {}) {
+  constructor(options: ThemeControllerOptions) {
+    this.labels = options.labels;
     this.root = options.root ?? document.documentElement;
     this.storage = "storage" in options ? options.storage : defaultStorage();
     this.media = "media" in options ? options.media : defaultMedia();
@@ -107,7 +111,7 @@ export class ThemeController {
   }
 
   private syncToggle(button: HTMLButtonElement): void {
-    const label = toggleLabel(this.current);
+    const label = toggleLabel(this.current, this.labels);
     button.textContent = label;
     button.setAttribute("aria-label", `Switch to ${this.current === "dark" ? "light" : "dark"} theme`);
     button.setAttribute("aria-pressed", String(this.current === "dark"));

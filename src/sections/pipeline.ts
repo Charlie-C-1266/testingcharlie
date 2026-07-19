@@ -1,5 +1,5 @@
 import { el } from "../dom.js";
-import type { CiStat, PipelineContent } from "../types.js";
+import type { CiStat, PipelineContent, UiLabels } from "../types.js";
 
 /** A single stat cell (number + mono label). */
 export function renderStat(stat: CiStat): HTMLElement {
@@ -14,14 +14,14 @@ export function renderStat(stat: CiStat): HTMLElement {
 }
 
 /** CI/CD pipeline panel shown in the hero's right column. */
-export function renderPipeline(pipeline: PipelineContent): HTMLElement {
+export function renderPipeline(pipeline: PipelineContent, ui: UiLabels): HTMLElement {
   const head = el("div", {
     class: "pipeline__head",
     children: [
-      el("span", { text: "ci/cd pipeline" }),
+      el("span", { text: ui.pipeline.title }),
       el("span", {
         class: "pipeline__status",
-        children: [el("span", { class: "status-dot", attrs: { "aria-hidden": "true" } }), "passing"],
+        children: [el("span", { class: "status-dot", attrs: { "aria-hidden": "true" } }), ui.pipeline.status],
       }),
     ],
   });

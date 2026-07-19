@@ -13,24 +13,24 @@ const passing: WorkProject = {
 
 describe("renderWorkCard", () => {
   it("shows a passing pill and an external link", () => {
-    const card = renderWorkCard(passing);
+    const card = renderWorkCard(passing, siteConfig.ui.passing);
     expect(card.getAttribute("target")).toBe("_blank");
     expect(card.getAttribute("aria-label")).toBe("Sentinel — Node · Playwright · 2024");
-    expect(card.querySelector(".pass--sm")?.textContent).toBe("✓ passing");
+    expect(card.querySelector(".pass--sm")?.textContent).toBe(`✓ ${siteConfig.ui.passing}`);
     expect(card.querySelector(".project-card__title")?.textContent).toBe("Sentinel");
   });
 
   it("omits the passing pill when not passing", () => {
-    const card = renderWorkCard({ ...passing, passing: false });
+    const card = renderWorkCard({ ...passing, passing: false }, siteConfig.ui.passing);
     expect(card.querySelector(".pass--sm")).toBeNull();
   });
 });
 
 describe("renderWork", () => {
   it("is the #work section with a card per project", () => {
-    const work = renderWork(siteConfig.work);
+    const work = renderWork(siteConfig.work, siteConfig.ui);
     expect(work.getAttribute("id")).toBe("work");
-    expect(work.querySelector(".prompt")?.textContent).toBe("$ ~/more-work");
+    expect(work.querySelector(".prompt")?.textContent).toBe(siteConfig.ui.prompts.moreWork);
     expect(work.querySelectorAll(".project-card")).toHaveLength(siteConfig.work.length);
   });
 });

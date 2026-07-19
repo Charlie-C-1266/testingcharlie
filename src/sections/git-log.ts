@@ -1,5 +1,5 @@
 import { el, linkTo, replaceChildren } from "../dom.js";
-import type { Commit, Identity } from "../types.js";
+import type { Commit, Identity, UiLabels } from "../types.js";
 import { trafficLights } from "./chrome.js";
 
 /** A single commit row: short hash · message · relative time. */
@@ -28,16 +28,16 @@ export function updateCommitList(list: Element, commits: Commit[]): void {
 }
 
 /** git-log terminal card: chrome bar + `git log --oneline` output. */
-export function renderTerminal(identity: Identity, commits: Commit[]): HTMLElement {
+export function renderTerminal(identity: Identity, commits: Commit[], ui: UiLabels): HTMLElement {
   const bar = el("div", {
     class: "terminal__bar",
     children: [
       ...trafficLights(),
       el("span", {
         class: "terminal__title",
-        text: `${identity.shellUser}@${identity.shellHost}: git log --oneline`,
+        text: `${identity.shellUser}@${identity.shellHost}: ${ui.terminal.command}`,
       }),
-      el("span", { class: "terminal__branch", text: "main ✓" }),
+      el("span", { class: "terminal__branch", text: ui.terminal.branch }),
     ],
   });
 

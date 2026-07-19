@@ -7,12 +7,12 @@ import { renderGitHubPanel } from "./github-panel.js";
 export function renderActivity(config: SiteConfig, data: ActivityData): HTMLElement {
   const grid = el("div", {
     class: "activity__grid",
-    children: [renderTerminal(config.identity, data.commits), renderGitHubPanel(data.github)],
+    children: [renderTerminal(config.identity, data.commits, config.ui), renderGitHubPanel(data.github, config.ui)],
   });
 
   return el("section", {
     class: "activity",
     attrs: { id: "activity", "aria-label": "Recent activity" },
-    children: [el("div", { class: "prompt", text: "$ ~/recent-activity" }), grid],
+    children: [el("div", { class: "prompt", text: config.ui.prompts.recentActivity }), grid],
   });
 }

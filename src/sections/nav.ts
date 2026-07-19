@@ -13,11 +13,14 @@ export function renderBrand(identity: Identity): HTMLElement {
   });
 }
 
-/** The theme toggle button. Its label/state is managed by ThemeController. */
-export function renderThemeToggle(): HTMLButtonElement {
+/**
+ * The theme toggle button. `label` is the initial (light-mode) text; once
+ * bound, ThemeController keeps the label in sync with the active theme.
+ */
+export function renderThemeToggle(label: string): HTMLButtonElement {
   return el("button", {
     class: "theme-toggle",
-    text: "☾ dark",
+    text: label,
     attrs: {
       type: "button",
       "data-testid": "theme-toggle",
@@ -29,7 +32,7 @@ export function renderThemeToggle(): HTMLButtonElement {
 
 /** Nav bar (section 1): brand on the left, status + links + toggle + contact. */
 export function renderNav(config: SiteConfig): HTMLElement {
-  const { identity, nav, buildStatus } = config;
+  const { identity, nav, buildStatus, ui } = config;
 
   const status = el("span", {
     class: "status",
@@ -42,14 +45,14 @@ export function renderNav(config: SiteConfig): HTMLElement {
 
   const contact = el("a", {
     class: "chip",
-    text: "get in touch",
+    text: ui.contactCta,
     attrs: { href: `mailto:${identity.email}` },
   });
 
   const right = el("nav", {
     class: "nav__links",
     attrs: { "aria-label": "Primary" },
-    children: [status, ...links, renderThemeToggle(), contact],
+    children: [status, ...links, renderThemeToggle(ui.themeToggle.toDark), contact],
   });
 
   return el("header", { class: "nav", children: [renderBrand(identity), right] });

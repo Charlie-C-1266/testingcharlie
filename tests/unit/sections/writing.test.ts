@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { renderComingSoon, renderPostRow, renderWriting } from "../../../src/sections/writing.js";
+import { siteConfig } from "../../../src/config.js";
 import type { Post } from "../../../src/types.js";
 
 const post: Post = {
@@ -22,26 +23,26 @@ describe("renderPostRow", () => {
 });
 
 describe("renderComingSoon", () => {
-  it("renders the coming-soon label with a cursor", () => {
-    const soon = renderComingSoon();
+  it("renders the given empty-state label with a cursor", () => {
+    const soon = renderComingSoon(siteConfig.ui.writingEmpty);
     expect(soon.className).toBe("writing__soon");
-    expect(soon.textContent).toBe("coming soon_");
+    expect(soon.textContent).toBe(`${siteConfig.ui.writingEmpty}_`);
     expect(soon.querySelector(".writing__cursor")?.getAttribute("aria-hidden")).toBe("true");
   });
 });
 
 describe("renderWriting", () => {
   it("renders a row per post when posts exist", () => {
-    const writing = renderWriting([post, { ...post, title: "Second" }]);
+    const writing = renderWriting([post, { ...post, title: "Second" }], siteConfig.ui);
     expect(writing.getAttribute("id")).toBe("writing");
-    expect(writing.querySelector(".prompt")?.textContent).toBe("$ ~/writing");
+    expect(writing.querySelector(".prompt")?.textContent).toBe(siteConfig.ui.prompts.writing);
     expect(writing.querySelectorAll(".post")).toHaveLength(2);
     expect(writing.querySelector(".writing__soon")).toBeNull();
   });
 
-  it("shows 'coming soon' when there are no posts", () => {
-    const writing = renderWriting([]);
+  it("shows the empty-state placeholder when there are no posts", () => {
+    const writing = renderWriting([], siteConfig.ui);
     expect(writing.querySelectorAll(".post")).toHaveLength(0);
-    expect(writing.querySelector(".writing__soon")?.textContent).toContain("coming soon");
+    expect(writing.querySelector(".writing__soon")?.textContent).toContain(siteConfig.ui.writingEmpty);
   });
 });

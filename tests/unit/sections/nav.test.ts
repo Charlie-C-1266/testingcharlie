@@ -3,12 +3,12 @@ import { renderBrand, renderNav, renderThemeToggle } from "../../../src/sections
 import { siteConfig } from "../../../src/config.js";
 
 describe("renderThemeToggle", () => {
-  it("is a button with the test hook and initial light-mode label", () => {
-    const button = renderThemeToggle();
+  it("is a button with the test hook and the given initial label", () => {
+    const button = renderThemeToggle(siteConfig.ui.themeToggle.toDark);
     expect(button.tagName).toBe("BUTTON");
     expect(button.getAttribute("type")).toBe("button");
     expect(button.getAttribute("data-testid")).toBe("theme-toggle");
-    expect(button.textContent).toBe("☾ dark");
+    expect(button.textContent).toBe(siteConfig.ui.themeToggle.toDark);
     expect(button.getAttribute("aria-pressed")).toBe("false");
   });
 });
@@ -32,5 +32,6 @@ describe("renderNav", () => {
 
     const contact = nav.querySelector(".chip");
     expect(contact?.getAttribute("href")).toBe(`mailto:${siteConfig.identity.email}`);
+    expect(contact?.textContent).toBe(siteConfig.ui.contactCta);
   });
 });

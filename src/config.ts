@@ -23,6 +23,24 @@ export const siteConfig: SiteConfig = {
     // description omitted → the build reuses hero.lead below, so the "brief"
     // sentence is authored in exactly one place.
   },
+  // Small fixed strings that head or label the sections. Everything the page
+  // says lives in this file — edit here to reword a prompt, panel title or
+  // button. (Decorative glyphs like the ✓ separators and the blinking cursor
+  // stay in the render layer; see UiLabels in types.ts.)
+  ui: {
+    contactCta: "get in touch",
+    themeToggle: { toDark: "☾ dark", toLight: "☀ light" },
+    prompts: {
+      recentActivity: "$ ~/recent-activity",
+      moreWork: "$ ~/more-work",
+      writing: "$ ~/writing",
+    },
+    pipeline: { title: "ci/cd pipeline", status: "passing" },
+    github: { title: "github", profileLink: "view profile →" },
+    terminal: { command: "git log --oneline", branch: "main ✓" },
+    passing: "passing",
+    writingEmpty: "coming soon",
+  },
   nav: [
     { label: "work", href: "#work" },
     { label: "writing", href: "#writing" },

@@ -14,6 +14,7 @@ const liveData: ActivityData = {
 
 function makeTheme(): ThemeController {
   return new ThemeController({
+    labels: siteConfig.ui.themeToggle,
     root: document.documentElement,
     storage: new MemoryStorage(),
     media: fakeMedia(false),

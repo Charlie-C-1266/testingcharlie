@@ -6,6 +6,7 @@ import {
   renderHeatmap,
   updateGitHubPanel,
 } from "../../../src/sections/github-panel.js";
+import { siteConfig } from "../../../src/config.js";
 import type { GitHubSummary } from "../../../src/types.js";
 
 const summary: GitHubSummary = {
@@ -60,18 +61,20 @@ describe("renderHeatmap", () => {
 
 describe("renderGitHubPanel", () => {
   it("wires the handle, caption and profile link", () => {
-    const panel = renderGitHubPanel(summary);
+    const panel = renderGitHubPanel(summary, siteConfig.ui);
     expect(panel.querySelector('[data-testid="github-handle"]')?.textContent).toBe("@testingcharlie");
     expect(panel.querySelector('[data-testid="github-caption"]')?.textContent).toContain("1,204 contributions");
     const link = panel.querySelector('[data-testid="github-link"]');
     expect(link?.getAttribute("href")).toBe(summary.profileUrl);
     expect(link?.getAttribute("target")).toBe("_blank");
+    expect(link?.textContent).toBe(siteConfig.ui.github.profileLink);
+    expect(panel.querySelector(".github__head")?.textContent).toContain(siteConfig.ui.github.title);
   });
 });
 
 describe("updateGitHubPanel", () => {
   it("refreshes handle, heatmap, caption and link in a mounted panel", () => {
-    const panel = renderGitHubPanel(summary);
+    const panel = renderGitHubPanel(summary, siteConfig.ui);
     const next: GitHubSummary = {
       ...summary,
       handle: "@charlie",
@@ -88,7 +91,7 @@ describe("updateGitHubPanel", () => {
   });
 
   it("collapses the heatmap when hydrated data has no contributions", () => {
-    const panel = renderGitHubPanel(summary);
+    const panel = renderGitHubPanel(summary, siteConfig.ui);
     updateGitHubPanel(panel, { ...summary, contributionCount: 0, contributions: [] });
     const heatmap = panel.querySelector('[data-testid="heatmap"]');
     expect(heatmap?.classList.contains("heatmap--empty")).toBe(true);

@@ -122,6 +122,65 @@ export interface FooterContent {
   email: string;
 }
 
+/** The two states of the theme-toggle button label (glyph + word). */
+export interface ThemeToggleLabels {
+  /** Shown in light mode; clicking switches to dark, e.g. "☾ dark". */
+  toDark: string;
+  /** Shown in dark mode; clicking switches to light, e.g. "☀ light". */
+  toLight: string;
+}
+
+/**
+ * The small fixed strings — section prompts, panel titles, button labels — that
+ * aren't part of a content list above but are still real, visible on-page copy.
+ * They live here so every word the site renders is editable in this one file.
+ *
+ * Purely decorative glyphs (the ✓ marquee separators, the › pipeline arrows,
+ * the blinking `_` cursors, the traffic-light dots) stay in the render layer,
+ * and so do the invisible ARIA labels — those are structural accessibility
+ * semantics rather than copy an author would want to reword.
+ */
+export interface UiLabels {
+  /** Nav contact chip, e.g. "get in touch". */
+  contactCta: string;
+  /** Theme-toggle labels; each names the action a click performs. */
+  themeToggle: ThemeToggleLabels;
+  /** The mono "$ ~/…" prompt line that heads each band. */
+  prompts: {
+    /** Recent-activity section, e.g. "$ ~/recent-activity". */
+    recentActivity: string;
+    /** More-work section, e.g. "$ ~/more-work". */
+    moreWork: string;
+    /** Writing section, e.g. "$ ~/writing". */
+    writing: string;
+  };
+  /** CI/CD pipeline panel (hero, right column). */
+  pipeline: {
+    /** Panel heading, e.g. "ci/cd pipeline". */
+    title: string;
+    /** Status word beside the green dot, e.g. "passing". */
+    status: string;
+  };
+  /** GitHub panel (recent-activity, right column). */
+  github: {
+    /** Panel heading, e.g. "github". */
+    title: string;
+    /** Profile link label, e.g. "view profile →". */
+    profileLink: string;
+  };
+  /** git-log terminal (recent-activity, left column). */
+  terminal: {
+    /** Command echoed in the title bar, e.g. "git log --oneline". */
+    command: string;
+    /** Branch chip, e.g. "main ✓". */
+    branch: string;
+  };
+  /** Word in the "✓ passing" project-card pill (the ✓ is added by the render layer). */
+  passing: string;
+  /** Placeholder shown in the writing section when there are no posts yet. */
+  writingEmpty: string;
+}
+
 /** Page metadata injected into the HTML shell at build time (see build-site.mjs). */
 export interface SeoMeta {
   /** Document `<title>` and social title. */
@@ -138,6 +197,8 @@ export interface SiteConfig {
   identity: Identity;
   /** SEO/social metadata baked into index.html at build (single source of truth). */
   seo: SeoMeta;
+  /** Small fixed UI strings (prompts, panel titles, button labels). */
+  ui: UiLabels;
   nav: NavItem[];
   socials: SocialLink[];
   /** Nav status line, e.g. "build: passing". */
