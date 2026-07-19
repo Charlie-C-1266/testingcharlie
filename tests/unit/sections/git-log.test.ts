@@ -39,9 +39,12 @@ describe("renderCommitList / updateCommitList", () => {
 
 describe("renderTerminal", () => {
   it("builds the shell prompt title and branch", () => {
-    const terminal = renderTerminal(siteConfig.identity, [withUrl]);
-    expect(terminal.querySelector(".terminal__title")?.textContent).toBe("charlie@testing: git log --oneline");
-    expect(terminal.querySelector(".terminal__branch")?.textContent).toBe("main ✓");
+    const terminal = renderTerminal(siteConfig.identity, [withUrl], siteConfig.ui);
+    const { shellUser, shellHost } = siteConfig.identity;
+    expect(terminal.querySelector(".terminal__title")?.textContent).toBe(
+      `${shellUser}@${shellHost}: ${siteConfig.ui.terminal.command}`,
+    );
+    expect(terminal.querySelector(".terminal__branch")?.textContent).toBe(siteConfig.ui.terminal.branch);
     expect(terminal.querySelector('[data-testid="commit-list"]')).not.toBeNull();
   });
 });

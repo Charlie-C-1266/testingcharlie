@@ -1,5 +1,5 @@
 import { el, externalLink, replaceChildren } from "../dom.js";
-import type { ContributionCell, GitHubSummary } from "../types.js";
+import type { ContributionCell, GitHubSummary, UiLabels } from "../types.js";
 
 /**
  * Caption line, e.g. "1,204 contributions in the last year · 34 repos". When
@@ -35,11 +35,11 @@ export function renderHeatmap(cells: ContributionCell[]): HTMLElement {
 }
 
 /** GitHub panel (section 5, right column). */
-export function renderGitHubPanel(github: GitHubSummary): HTMLElement {
+export function renderGitHubPanel(github: GitHubSummary, ui: UiLabels): HTMLElement {
   const head = el("div", {
     class: "github__head",
     children: [
-      el("span", { text: "github" }),
+      el("span", { text: ui.github.title }),
       el("span", { class: "github__handle", attrs: { "data-testid": "github-handle" }, text: github.handle }),
     ],
   });
@@ -50,7 +50,7 @@ export function renderGitHubPanel(github: GitHubSummary): HTMLElement {
     text: contributionSummary(github),
   });
 
-  const link = externalLink(github.profileUrl, "github__link", ["view profile →"], {
+  const link = externalLink(github.profileUrl, "github__link", [ui.github.profileLink], {
     "data-testid": "github-link",
   });
 

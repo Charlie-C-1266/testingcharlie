@@ -44,6 +44,21 @@ describe("siteConfig", () => {
     expect(labels).not.toContain("Mastodon");
   });
 
+  it("centralises the fixed UI strings (prompts, panel titles, labels)", () => {
+    const { ui } = siteConfig;
+    expect(ui.contactCta).toBeTruthy();
+    expect(ui.themeToggle.toDark).toBeTruthy();
+    expect(ui.themeToggle.toLight).toBeTruthy();
+    // Section prompts all follow the mono "$ ~/…" convention.
+    for (const prompt of Object.values(ui.prompts)) {
+      expect(prompt).toMatch(/^\$ ~\//);
+    }
+    expect(ui.pipeline.title).toBeTruthy();
+    expect(ui.github.title).toBeTruthy();
+    expect(ui.terminal.command).toBeTruthy();
+    expect(ui.writingEmpty).toBeTruthy();
+  });
+
   it("marks exactly one pipeline stat as emphasised", () => {
     const emphasised = siteConfig.pipeline.stats.filter((stat) => stat.emphasis);
     expect(emphasised).toHaveLength(1);

@@ -203,6 +203,10 @@ Everything below is placeholder content from the design handoff — edit
 - **Featured screenshot** — add `featured.screenshot.src` to swap the striped
   placeholder for a real image of `caniaffordthat.co.uk`.
 - **Projects** — `work[]`.
+- **UI strings** — every fixed on-page label (section prompts like `$ ~/writing`,
+  the "get in touch" button, the theme-toggle text, the `ci/cd pipeline` /
+  `github` panel titles, the "coming soon" placeholder) lives in `ui`, so there
+  are no words hard-coded in the render layer to hunt down.
 - **Writing** — posts are authored as Markdown in `content/blog/` and generated
   at build time; see [Writing](#writing-the-blog). Remove the sample post
   (`content/blog/2026-07-17-hello-world.md`) once you publish a real one.

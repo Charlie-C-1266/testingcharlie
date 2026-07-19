@@ -1,12 +1,12 @@
 import { el, linkTo } from "../dom.js";
 import type { ElChild } from "../dom.js";
-import type { WorkProject } from "../types.js";
+import type { UiLabels, WorkProject } from "../types.js";
 
 /** A project link-card (title + optional passing pill + description + meta). */
-export function renderWorkCard(project: WorkProject): HTMLAnchorElement {
+export function renderWorkCard(project: WorkProject, passingLabel: string): HTMLAnchorElement {
   const headChildren: ElChild[] = [el("h3", { class: "project-card__title", text: project.name })];
   if (project.passing) {
-    headChildren.push(el("span", { class: "pass pass--sm", text: "✓ passing" }));
+    headChildren.push(el("span", { class: "pass pass--sm", text: `✓ ${passingLabel}` }));
   }
 
   const children: ElChild[] = [
@@ -20,13 +20,16 @@ export function renderWorkCard(project: WorkProject): HTMLAnchorElement {
 }
 
 /** More-work section (6): a two-up grid of project cards. */
-export function renderWork(projects: WorkProject[]): HTMLElement {
+export function renderWork(projects: WorkProject[], ui: UiLabels): HTMLElement {
   return el("section", {
     class: "work",
     attrs: { id: "work", "aria-label": "More work" },
     children: [
-      el("div", { class: "prompt", text: "$ ~/more-work" }),
-      el("div", { class: "work__grid", children: projects.map(renderWorkCard) }),
+      el("div", { class: "prompt", text: ui.prompts.moreWork }),
+      el("div", {
+        class: "work__grid",
+        children: projects.map((project) => renderWorkCard(project, ui.passing)),
+      }),
     ],
   });
 }

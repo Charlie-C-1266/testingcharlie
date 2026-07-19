@@ -14,6 +14,6 @@ const root = document.getElementById("app");
 if (root) {
   const client = new GitHubClient({ username: siteConfig.identity.githubUsername });
   const dataSource = new LiveDataSource({ client, seed: seedActivity });
-  const theme = new ThemeController();
+  const theme = new ThemeController({ labels: siteConfig.ui.themeToggle });
   mountApp({ root, config: siteConfig, dataSource, theme });
 }
