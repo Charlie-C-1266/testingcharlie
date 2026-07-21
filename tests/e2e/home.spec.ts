@@ -42,6 +42,54 @@ test.describe("homepage", () => {
     );
   });
 
+  test("exposes canonical, Open Graph and Twitter card metadata", async ({ page }) => {
+    await expect(page.locator('head > link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://www.testingcharlie.co.uk/",
+    );
+    await expect(page.locator('head > meta[property="og:title"]')).toHaveAttribute("content", /testingcharlie/);
+    await expect(page.locator('head > meta[property="og:image"]')).toHaveAttribute(
+      "content",
+      "https://www.testingcharlie.co.uk/og.png",
+    );
+    await expect(page.locator('head > meta[name="twitter:card"]')).toHaveAttribute(
+      "content",
+      "summary_large_image",
+    );
+  });
+
+  test("ships JSON-LD structured data (Person + WebSite)", async ({ page }) => {
+    const ld = await page.locator('head > script[type="application/ld+json"]').textContent();
+    const graph = JSON.parse(ld ?? "{}")["@graph"];
+    const types = graph.map((node) => node["@type"]);
+    expect(types).toEqual(expect.arrayContaining(["Person", "WebSite"]));
+  });
+
+  test("self-hosts the fonts (no Google Fonts) and loads the display face", async ({ page }) => {
+    await expect(page.locator('head link[href*="fonts.googleapis.com"]')).toHaveCount(0);
+    await expect(page.locator('head link[href*="fonts.gstatic.com"]')).toHaveCount(0);
+    const loaded = await page.evaluate(async () => {
+      await document.fonts.ready;
+      return document.fonts.check('700 16px "Space Grotesk"');
+    });
+    expect(loaded).toBe(true);
+  });
+
+  test("serves the SEO sidecar files and brand assets", async ({ page }) => {
+    for (const path of [
+      "/robots.txt",
+      "/sitemap.xml",
+      "/site.webmanifest",
+      "/favicon.svg",
+      "/favicon.ico",
+      "/og.png",
+      "/apple-touch-icon.png",
+    ]) {
+      const response = await page.request.get(path);
+      expect(response.status(), path).toBe(200);
+    }
+  });
+
   test("has working section anchor links in the nav", async ({ page }) => {
     await expect(page.locator(".nav__link", { hasText: "work" })).toHaveAttribute("href", "#work");
     await expect(page.locator(".nav__link", { hasText: "writing" })).toHaveAttribute("href", "#writing");

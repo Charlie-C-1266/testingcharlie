@@ -3,19 +3,36 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Title + description are injected at build from siteConfig.seo (src/config.ts). -->
+    <!--
+      Title, description, canonical link, Open Graph/Twitter cards and the
+      JSON-LD structured data below are all injected at build from
+      siteConfig.seo (src/config.ts) — so this copy lives in exactly one place.
+    -->
     <title>__SEO_TITLE__</title>
     <meta name="description" content="__SEO_DESCRIPTION__" />
+    __SOCIAL_META__
     <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f2ec" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#181a1b" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"
-    />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!--
+      Self-hosted fonts (styles/fonts.css) — no third-party origin, so the CSP
+      stays same-origin (see vercel.json). Preload the two faces used above the
+      fold to keep first paint fast without the old Google Fonts round-trip.
+    -->
+    <link rel="preload" href="/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="styles/fonts.css" />
     <link rel="stylesheet" href="styles/tokens.css" />
     <link rel="stylesheet" href="styles/style.css" />
+
+    __JSON_LD__
 
     <!--
       Apply the saved (or preferred) theme before first paint to avoid a flash.

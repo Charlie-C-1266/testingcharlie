@@ -7,13 +7,17 @@ import { mountApp } from "./app.js";
 import { siteConfig } from "./config.js";
 import { LiveDataSource } from "./data-source.js";
 import { GitHubClient } from "./github/client.js";
+import { createErrorReporter, installGlobalHandlers, type ReportingWindow } from "./reporting.js";
 import { seedActivity } from "./seed.js";
 import { ThemeController } from "./theme.js";
+
+const reportError = createErrorReporter(window as unknown as ReportingWindow);
+installGlobalHandlers(window as unknown as ReportingWindow, reportError);
 
 const root = document.getElementById("app");
 if (root) {
   const client = new GitHubClient({ username: siteConfig.identity.githubUsername });
   const dataSource = new LiveDataSource({ client, seed: seedActivity });
   const theme = new ThemeController({ labels: siteConfig.ui.themeToggle });
-  mountApp({ root, config: siteConfig, dataSource, theme });
+  mountApp({ root, config: siteConfig, dataSource, theme, reportError });
 }

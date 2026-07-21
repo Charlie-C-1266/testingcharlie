@@ -1,0 +1,27 @@
+# Keep the (deliberately bleeding-edge) dependencies and CI actions current.
+# Dependabot opens grouped PRs so a week's updates land as one review, not a
+# swarm — and the existing CI gates (typecheck · coverage · build · e2e) run on
+# each, so a breaking bump can't merge green by accident.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # Dev tooling moves fast and is low-risk to batch together.
+      dev-dependencies:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"

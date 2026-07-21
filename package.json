@@ -3,10 +3,14 @@
   "version": "1.0.0",
   "description": "Personal site for Charlie — senior test engineer. Editorial-studio meets CI dashboard.",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "tsc",
     "build:site": "node scripts/build-github-activity.mjs && node scripts/build-blog-manifest.mjs && tsc && node scripts/build-site.mjs",
     "refresh:github": "node scripts/build-github-activity.mjs",
+    "gen:assets": "node scripts/gen-assets.mjs",
     "watch": "tsc --watch",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
     "serve": "npm run build:site && npx --yes serve public",

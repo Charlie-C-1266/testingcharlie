@@ -1,0 +1,31 @@
+/*
+ * Self-hosted web fonts.
+ *
+ * Space Grotesk and JetBrains Mono are served from the same origin (the .woff2
+ * files live in static/fonts/ and ship to public/fonts/). This keeps the site
+ * on a strict, same-origin CSP — no Google Fonts CDN holes, no third-party
+ * round-trip, no privacy dependency.
+ *
+ * Both are variable fonts: one .woff2 per family carries the whole weight axis,
+ * so a single @font-face with a `font-weight` range covers every weight the
+ * design uses (Space Grotesk 400/500/700, JetBrains Mono 400/500). Both are
+ * licensed under the SIL Open Font License 1.1, which permits redistribution.
+ * `font-display: swap` shows the fallback stack (see --font-display / --font-mono
+ * in tokens.css) until the face loads.
+ */
+
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/space-grotesk.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono.woff2") format("woff2");
+}

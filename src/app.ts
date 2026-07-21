@@ -1,4 +1,5 @@
 import type { DataSource } from "./data-source.js";
+import type { ErrorReporter } from "./reporting.js";
 import type { ThemeController } from "./theme.js";
 import type { ActivityData, SiteConfig } from "./types.js";
 import { renderActivity } from "./sections/activity.js";
@@ -44,6 +45,12 @@ export interface MountOptions {
   config: SiteConfig;
   dataSource: DataSource;
   theme: ThemeController;
+  /**
+   * Optional sink for hydration failures. Without it the page still degrades
+   * gracefully to the seed render; with it, a persistent live-data outage
+   * becomes observable instead of silently swallowed (see src/reporting.ts).
+   */
+  reportError?: ErrorReporter;
 }
 
 /**
@@ -53,7 +60,7 @@ export interface MountOptions {
  * swallowed) — handy for tests.
  */
 export function mountApp(options: MountOptions): { hydrated: Promise<void> } {
-  const { root, config, dataSource, theme } = options;
+  const { root, config, dataSource, theme, reportError } = options;
 
   root.classList.add("app");
   root.replaceChildren(...renderPage(config, dataSource.initial()));
@@ -67,8 +74,10 @@ export function mountApp(options: MountOptions): { hydrated: Promise<void> } {
   const hydrated = dataSource
     .hydrate()
     .then((live) => applyLiveData(root, live))
-    .catch(() => {
-      // Keep the seed render on any failure — the page is already complete.
+    .catch((error: unknown) => {
+      // Keep the seed render on any failure — the page is already complete —
+      // but surface it so a persistent outage doesn't pass unnoticed.
+      reportError?.("hydrate", error);
     });
 
   return { hydrated };
