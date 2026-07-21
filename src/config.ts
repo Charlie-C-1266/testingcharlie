@@ -22,6 +22,16 @@ export const siteConfig: SiteConfig = {
     title: "testingcharlie — Charlie · Senior Test Engineer",
     // description omitted → the build reuses hero.lead below, so the "brief"
     // sentence is authored in exactly one place.
+    siteUrl: "https://www.testingcharlie.co.uk",
+    image: {
+      path: "/og.png",
+      alt: "testingcharlie — Charlie, senior test engineer. Automation, CI/CD and DevOps.",
+      width: 1200,
+      height: 630,
+      type: "image/png",
+    },
+    locale: "en_GB",
+    person: { name: "Charlie", jobTitle: "Senior Test Engineer" },
   },
   // Small fixed strings that head or label the sections. Everything the page
   // says lives in this file — edit here to reword a prompt, panel title or

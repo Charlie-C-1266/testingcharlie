@@ -23,6 +23,7 @@ import { readFileSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 import { marked } from "marked";
+import { absoluteUrl, renderSocialMeta } from "./seo.mjs";
 
 // Repo root. Both the build scripts (`node scripts/…`) and Vitest always run
 // with the working directory at the package root, so cwd is the reliable anchor
@@ -131,20 +132,46 @@ export function formatDate(iso) {
   return `${Number(day)} ${MONTHS[Number(month) - 1]} ${year}`;
 }
 
-/** Shared <head>: fonts, design tokens, site + blog styles, theme boot. */
-function head(title, description) {
+/**
+ * Shared <head>: self-hosted fonts, favicons/manifest, design tokens, site +
+ * blog styles and the theme boot. When a `site` context is supplied (from the
+ * build), the page also carries a canonical link and Open Graph / Twitter tags
+ * built from the same generator the homepage uses. Fonts are same-origin, so
+ * blog pages stay within the strict CSP just like index.html.
+ *
+ * @param {{ title: string, socialTitle: string, description: string, path: string, type: string }} page
+ * @param {{ siteUrl: string, siteName: string, image: object, locale: string } | undefined} site
+ */
+function head(page, site) {
+  const social = site
+    ? `\n    ${renderSocialMeta({
+        type: page.type,
+        url: absoluteUrl(site.siteUrl, page.path),
+        title: page.socialTitle,
+        description: page.description,
+        imageUrl: absoluteUrl(site.siteUrl, site.image.path),
+        image: site.image,
+        siteName: site.siteName,
+        locale: site.locale,
+      })}`
+    : "";
   return `    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${escapeHtml(title)} — testingcharlie</title>
-    <meta name="description" content="${escapeHtml(description)}" />
+    <title>${escapeHtml(page.title)} — testingcharlie</title>
+    <meta name="description" content="${escapeHtml(page.description)}" />${social}
     <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f2ec" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#181a1b" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"
-    />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <link rel="preload" href="/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/styles/fonts.css" />
     <link rel="stylesheet" href="/styles/tokens.css" />
     <link rel="stylesheet" href="/styles/style.css" />
     <link rel="stylesheet" href="/styles/blog.css" />
@@ -153,12 +180,19 @@ function head(title, description) {
 }
 
 /** Render a single post to a complete, CSP-clean static HTML document. */
-export function renderPostPage(post) {
+export function renderPostPage(post, site) {
   const description = post.description || post.blurb;
+  const page = {
+    title: post.title,
+    socialTitle: post.title,
+    description,
+    path: post.url,
+    type: "article",
+  };
   return `<!doctype html>
 <html lang="en">
   <head>
-${head(post.title, description)}
+${head(page, site)}
   </head>
   <body class="post-page">
     <header class="post-topbar">
@@ -179,7 +213,7 @@ ${post.bodyHtml}
 }
 
 /** Render the /blog index listing every post, newest first. */
-export function renderBlogIndex(posts) {
+export function renderBlogIndex(posts, site) {
   const rows = posts.length
     ? posts
         .map(
@@ -194,10 +228,17 @@ export function renderBlogIndex(posts) {
         .join("\n")
     : `        <p class="post-list__empty">No posts yet — check back soon.</p>`;
 
+  const page = {
+    title: "Writing",
+    socialTitle: "Writing",
+    description: "Notes on test engineering, automation and CI from Charlie.",
+    path: "/blog",
+    type: "website",
+  };
   return `<!doctype html>
 <html lang="en">
   <head>
-${head("Writing", "Notes on test engineering, automation and CI from Charlie.")}
+${head(page, site)}
   </head>
   <body class="post-page">
     <header class="post-topbar">

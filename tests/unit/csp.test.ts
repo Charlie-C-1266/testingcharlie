@@ -60,9 +60,23 @@ describe("Content-Security-Policy", () => {
     expect(html).not.toMatch(/\son[a-z]+=/i);
   });
 
-  it("allows the only external origins the page actually uses", () => {
-    expect(vercelConfig).toContain("https://fonts.googleapis.com");
-    expect(vercelConfig).toContain("https://fonts.gstatic.com");
-    expect(vercelConfig).toContain("https://api.github.com");
+  it("keeps fonts and styles same-origin — self-hosted, no Google Fonts holes", () => {
+    // The fonts moved in-repo (static/fonts → /fonts/*.woff2, styles/fonts.css),
+    // so the CSP no longer needs to open up fonts.googleapis.com / fonts.gstatic.com.
+    expect(vercelConfig).toContain("style-src 'self'");
+    expect(vercelConfig).toContain("font-src 'self'");
+    expect(vercelConfig).not.toContain("fonts.googleapis.com");
+    expect(vercelConfig).not.toContain("fonts.gstatic.com");
+  });
+
+  it("still allows the GitHub API as the only external connect origin", () => {
+    expect(vercelConfig).toContain("connect-src 'self' https://api.github.com");
+  });
+
+  it("links only self-hosted fonts from the page head", () => {
+    expect(html).not.toContain("fonts.googleapis.com");
+    expect(html).not.toContain("fonts.gstatic.com");
+    expect(html).toContain('href="styles/fonts.css"');
+    expect(html).toMatch(/<link rel="preload" href="\/fonts\/[^"]+\.woff2"/);
   });
 });

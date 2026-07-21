@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { applyLiveData, mountApp, renderPage } from "../../src/app.js";
 import type { DataSource } from "../../src/data-source.js";
 import { ThemeController } from "../../src/theme.js";
@@ -82,5 +82,23 @@ describe("mountApp", () => {
     await expect(hydrated).resolves.toBeUndefined();
     const seedHash = seedActivity.commits[0]?.hash;
     expect(root.querySelector(".commit__hash")?.textContent).toBe(seedHash);
+  });
+
+  it("reports a hydration failure through reportError (still keeping the seed)", async () => {
+    const root = document.createElement("div");
+    const boom = new Error("rate limited");
+    const reportError = vi.fn();
+    const source = fixedSource({ hydrate: async () => Promise.reject(boom) });
+    const { hydrated } = mountApp({
+      root,
+      config: siteConfig,
+      dataSource: source,
+      theme: makeTheme(),
+      reportError,
+    });
+
+    await expect(hydrated).resolves.toBeUndefined();
+    expect(reportError).toHaveBeenCalledWith("hydrate", boom);
+    expect(root.querySelector(".commit__hash")?.textContent).toBe(seedActivity.commits[0]?.hash);
   });
 });

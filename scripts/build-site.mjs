@@ -28,6 +28,14 @@ import { fileURLToPath } from "node:url";
 import { siteConfig } from "../dist/config.js";
 import { loadPosts, renderBlogIndex, renderPostPage } from "./blog.mjs";
 import { applyTemplate, escapeHtml } from "./html-template.mjs";
+import {
+  renderJsonLd,
+  renderManifest,
+  renderRobots,
+  renderSitemap,
+  renderSocialMeta,
+  resolveSeo,
+} from "./seo.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const out = join(root, "public");
@@ -40,12 +48,53 @@ async function copyStyles() {
   await cp(join(root, "styles"), join(out, "styles"), { recursive: true });
 }
 
+/**
+ * Copy the committed brand assets (favicons, icons, og.png, self-hosted fonts)
+ * from static/ into the output root — so they're served same-origin at
+ * /favicon.svg, /og.png, /fonts/*.woff2, etc. Regenerate them with
+ * `npm run gen:assets` (see scripts/gen-assets.mjs).
+ */
+async function copyStatic() {
+  await cp(join(root, "static"), out, { recursive: true });
+}
+
+/**
+ * Emit the SEO sidecar files from the same typed config: robots.txt, the PWA
+ * web manifest, and a sitemap.xml listing the homepage, the blog index and
+ * every post (absolute URLs from siteConfig.seo.siteUrl).
+ */
+async function writeSeoFiles(posts) {
+  const { siteUrl } = resolveSeo(siteConfig);
+  await writeFile(join(out, "robots.txt"), renderRobots(siteUrl));
+  await writeFile(join(out, "site.webmanifest"), renderManifest(siteConfig));
+  const entries = [
+    { path: "/" },
+    { path: "/blog" },
+    ...posts.map((post) => ({ path: post.url, lastmod: post.date || undefined })),
+  ];
+  await writeFile(join(out, "sitemap.xml"), renderSitemap(siteUrl, entries));
+}
+
 /** Placeholder values injected into the HTML shell — see scripts/html-template.mjs. */
 function pageTokens() {
+  // All derived from the one typed siteConfig.seo, so the head can never drift
+  // from the app: title, the brief (hero.lead unless overridden), the social
+  // card meta and the JSON-LD structured data.
+  const seo = resolveSeo(siteConfig);
   return {
-    SEO_TITLE: escapeHtml(siteConfig.seo.title),
-    // The brief is authored once as hero.lead; SEO reuses it unless overridden.
-    SEO_DESCRIPTION: escapeHtml(siteConfig.seo.description ?? siteConfig.hero.lead),
+    SEO_TITLE: escapeHtml(seo.title),
+    SEO_DESCRIPTION: escapeHtml(seo.description),
+    SOCIAL_META: renderSocialMeta({
+      type: "website",
+      url: seo.canonicalUrl,
+      title: seo.title,
+      description: seo.description,
+      imageUrl: seo.imageUrl,
+      image: seo.image,
+      siteName: seo.siteName,
+      locale: seo.locale,
+    }),
+    JSON_LD: renderJsonLd(seo),
   };
 }
 
@@ -95,14 +144,17 @@ async function copyScripts() {
  */
 async function buildBlog() {
   const posts = await loadPosts();
+  // Same resolved SEO context the homepage uses, so blog pages get a canonical
+  // link + Open Graph card built from the one config.
+  const site = resolveSeo(siteConfig);
   await mkdir(join(out, "blog"), { recursive: true });
 
   for (const post of posts) {
-    await writeFile(join(out, "blog", `${post.slug}.html`), renderPostPage(post));
+    await writeFile(join(out, "blog", `${post.slug}.html`), renderPostPage(post, site));
   }
-  await writeFile(join(out, "blog", "index.html"), renderBlogIndex(posts));
+  await writeFile(join(out, "blog", "index.html"), renderBlogIndex(posts, site));
 
-  return posts.length;
+  return posts;
 }
 
 async function main() {
@@ -111,7 +163,10 @@ async function main() {
   await copyPages();
   await copyStyles();
   await copyScripts();
-  const postCount = await buildBlog();
+  await copyStatic();
+  const posts = await buildBlog();
+  await writeSeoFiles(posts);
+  const postCount = posts.length;
   console.log(
     `Assembled static site → ${relative(root, out)}/ (${postCount} blog post${postCount === 1 ? "" : "s"})`,
   );

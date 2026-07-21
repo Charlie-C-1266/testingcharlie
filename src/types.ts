@@ -181,6 +181,24 @@ export interface UiLabels {
   writingEmpty: string;
 }
 
+/** A social share image (Open Graph / Twitter Card). */
+export interface SeoImage {
+  /** Site-root-relative path, e.g. "/og.png". */
+  path: string;
+  /** Alt text describing the card. */
+  alt: string;
+  width: number;
+  height: number;
+  /** MIME type, e.g. "image/png". */
+  type: string;
+}
+
+/** The person the site represents — surfaced as JSON-LD `Person`. */
+export interface SeoPerson {
+  name: string;
+  jobTitle: string;
+}
+
 /** Page metadata injected into the HTML shell at build time (see build-site.mjs). */
 export interface SeoMeta {
   /** Document `<title>` and social title. */
@@ -190,6 +208,18 @@ export interface SeoMeta {
    * brief) so that sentence lives in exactly one place.
    */
   description?: string;
+  /**
+   * Canonical production origin, no trailing slash, e.g.
+   * "https://www.testingcharlie.co.uk". Drives the canonical link, `og:url`,
+   * JSON-LD and the absolute URLs in robots.txt / sitemap.xml.
+   */
+  siteUrl: string;
+  /** Social share image used for both Open Graph and Twitter cards. */
+  image: SeoImage;
+  /** Open Graph locale, e.g. "en_GB". */
+  locale: string;
+  /** Identity behind the site, surfaced as JSON-LD `Person`. */
+  person: SeoPerson;
 }
 
 /** The full, hand-authored configuration + content for the page. */

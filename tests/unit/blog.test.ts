@@ -116,6 +116,40 @@ describe("renderBlogIndex", () => {
   });
 });
 
+describe("blog SEO + self-hosted fonts (build-supplied site context)", () => {
+  const site = {
+    siteUrl: "https://www.testingcharlie.co.uk",
+    siteName: "testingcharlie.co.uk",
+    image: { path: "/og.png", alt: "Share card", width: 1200, height: 630, type: "image/png" },
+    locale: "en_GB",
+  };
+
+  it("adds a canonical link and article Open Graph tags to a post", () => {
+    const html = renderPostPage(samplePost(), site);
+    expect(html).toContain(
+      '<link rel="canonical" href="https://www.testingcharlie.co.uk/blog/flaky-tests" />',
+    );
+    expect(html).toContain('<meta property="og:type" content="article" />');
+    expect(html).toContain('<meta property="og:image" content="https://www.testingcharlie.co.uk/og.png" />');
+    // Still exactly one inline script — blog pages carry no JSON-LD.
+    expect(html.match(/<script/g)).toHaveLength(1);
+  });
+
+  it("marks the blog index as a website with its own canonical", () => {
+    const html = renderBlogIndex([samplePost()], site);
+    expect(html).toContain('<link rel="canonical" href="https://www.testingcharlie.co.uk/blog" />');
+    expect(html).toContain('<meta property="og:type" content="website" />');
+  });
+
+  it("self-hosts fonts and links no third-party font origin", () => {
+    const html = renderPostPage(samplePost(), site);
+    expect(html).toContain('href="/styles/fonts.css"');
+    expect(html).toContain('rel="preload" href="/fonts/space-grotesk.woff2"');
+    expect(html).not.toContain("fonts.googleapis.com");
+    expect(html).not.toContain("fonts.gstatic.com");
+  });
+});
+
 describe("renderPostsManifest", () => {
   it("emits a typed module using the display date and post URL", () => {
     const manifest = renderPostsManifest([samplePost({ title: "Post \"one\"" })]);
