@@ -40,6 +40,7 @@ content/
   blog/                 Authored posts in Markdown (+ _template.md) ← write here
 static/                 Brand assets copied verbatim → public/ root
   favicon.svg, *.png, favicon.ico, og.png   icons + 1200×630 social card
+  caniaffordthat.png    Featured-project screenshot (npm run gen:screenshot)
   fonts/*.woff2         Self-hosted Space Grotesk + JetBrains Mono (variable)
 scripts/
   blog.mjs              Build-time blog engine (Markdown → HTML, manifest)
@@ -47,6 +48,7 @@ scripts/
   build-site.mjs        Assembles the deployable bundle → public/
   seo.mjs               SEO/social generators (OG, JSON-LD, robots, sitemap)
   gen-assets.mjs        Regenerate favicons + OG card (npm run gen:assets)
+  gen-screenshot.mjs    Bake the featured-site screenshot (npm run gen:screenshot)
 tests/
   unit/                 Vitest (jsdom) — render fns, theme, client, mappers, CSP, blog
   e2e/                  Playwright — theme, hydration, responsive, a11y, blog
@@ -219,8 +221,10 @@ Everything below is placeholder content from the design handoff — edit
 - **GitHub account** — `identity.githubUsername` drives the live API (currently
   `Charlie-C-1266`); `identity.githubHandle` is the displayed `@handle`.
 - **Socials** — a real LinkedIn URL in `socials[]`.
-- **Featured screenshot** — add `featured.screenshot.src` to swap the striped
-  placeholder for a real image of `caniaffordthat.co.uk`.
+- **Featured screenshot** — `featured.screenshot.src` points at
+  `/caniaffordthat.png`, baked from the live site by `npm run gen:screenshot`
+  into `static/`. Re-run it after the featured site's design changes; clear
+  `src` to fall back to the striped placeholder.
 - **Projects** — `work[]`.
 - **UI strings** — every fixed on-page label (section prompts like `$ ~/writing`,
   the "get in touch" button, the theme-toggle text, the `ci/cd pipeline` /

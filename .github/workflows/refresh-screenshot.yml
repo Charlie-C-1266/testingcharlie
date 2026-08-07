@@ -1,0 +1,58 @@
+name: Refresh featured screenshot
+
+# Weekly drift check for the featured-project screenshot. The capture of
+# caniaffordthat.co.uk is byte-for-byte deterministic (see
+# scripts/gen-screenshot.mjs), so a plain re-bake + git diff is a reliable,
+# noise-free signal. When the live site has changed, this opens (or updates) a
+# PR with the refreshed static/caniaffordthat.png for a human to eyeball and
+# merge — it never commits to main directly. If no bytes changed the PR step is
+# a no-op. Trigger on demand from the Actions tab (workflow_dispatch).
+#
+# Requires the repo setting Settings → Actions → General → Workflow permissions
+# → "Allow GitHub Actions to create and approve pull requests" to be enabled,
+# otherwise the create-pull-request step 403s.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: refresh-screenshot
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    name: Re-bake screenshot · open PR on drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      - name: Re-bake the featured screenshot
+        run: npm run gen:screenshot
+      - name: Open a PR if the screenshot drifted
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/refresh-featured-screenshot
+          base: main
+          add-paths: static/caniaffordthat.png
+          commit-message: Refresh featured-project screenshot
+          title: Refresh featured-project screenshot
+          body: |
+            The scheduled drift check re-baked `static/caniaffordthat.png` from
+            the live [caniaffordthat.co.uk](https://www.caniaffordthat.co.uk) and
+            it changed — the featured site's landing page has been updated.
+
+            Please eyeball the visual diff on this PR and merge if it looks
+            right. To reproduce locally: `npm run gen:screenshot`.
+          delete-branch: true

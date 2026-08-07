@@ -13,8 +13,12 @@ describe("trafficLights", () => {
 
 describe("renderBrowser", () => {
   it("shows the striped placeholder label when no screenshot is set", () => {
-    const browser = renderBrowser(siteConfig.featured);
-    expect(browser.querySelector(".browser__shot-label")?.textContent).toBe(siteConfig.featured.screenshot.placeholder);
+    const noShot: FeaturedProject = {
+      ...siteConfig.featured,
+      screenshot: { alt: "unused", placeholder: "screenshot pending" },
+    };
+    const browser = renderBrowser(noShot);
+    expect(browser.querySelector(".browser__shot-label")?.textContent).toBe("screenshot pending");
     expect(browser.querySelector("img")).toBeNull();
   });
 
@@ -26,6 +30,14 @@ describe("renderBrowser", () => {
     const img = renderBrowser(withShot).querySelector("img");
     expect(img?.getAttribute("src")).toBe("/shot.png");
     expect(img?.getAttribute("alt")).toBe("A screenshot");
+  });
+
+  it("renders the configured featured screenshot, not the placeholder", () => {
+    const browser = renderBrowser(siteConfig.featured);
+    const img = browser.querySelector("img");
+    expect(img?.getAttribute("src")).toBe(siteConfig.featured.screenshot.src);
+    expect(img?.getAttribute("alt")).toBe(siteConfig.featured.screenshot.alt);
+    expect(browser.querySelector(".browser__shot-label")).toBeNull();
   });
 });
 
