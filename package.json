@@ -38,7 +38,7 @@
   },
   "homepage": "https://github.com/Charlie-C-1266/testingcharlie#readme",
   "devDependencies": {
-    "@playwright/test": "^1.56.0",
+    "@playwright/test": "^1.62.0",
     "@types/node": "^22.10.0",
     "@vitest/coverage-v8": "^4.1.10",
     "jsdom": "^26.0.0",
