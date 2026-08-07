@@ -103,8 +103,13 @@ export const siteConfig: SiteConfig = {
     pills: ["214 tests", "96% coverage", "0 flakes"],
     actionLabel: "View project →",
     meta: "React · TypeScript · 2025",
-    // No `src` yet → the striped placeholder is shown. Add a real screenshot URL.
+    // Baked from the live site by `npm run gen:screenshot` into
+    // static/caniaffordthat.png (served same-origin at /caniaffordthat.png).
+    // The script derives both the page to capture (`url` above) and this output
+    // path from here, so this stays the single source. `placeholder` is the
+    // fallback label shown only if `src` is ever cleared.
     screenshot: {
+      src: "/caniaffordthat.png",
       alt: "Screenshot of the caniaffordthat.co.uk budgeting app",
       placeholder: "screenshot — caniaffordthat.co.uk",
     },
