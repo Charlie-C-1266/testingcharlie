@@ -17,11 +17,13 @@ describe("siteConfig", () => {
     expect(siteConfig.seo.description ?? siteConfig.hero.lead).toContain("Bristol");
   });
 
-  it("has the eight-section content wired up", () => {
+  it("has the section content wired up", () => {
     expect(siteConfig.nav.length).toBeGreaterThan(0);
     expect(siteConfig.pipeline.stages).toContain("build");
     expect(siteConfig.pipeline.stats).toHaveLength(3);
     expect(siteConfig.marqueeKeywords.length).toBeGreaterThan(0);
+    expect(siteConfig.about.lead.length).toBeGreaterThan(0);
+    expect(siteConfig.about.highlights.length).toBeGreaterThan(0);
     expect(siteConfig.work.length).toBeGreaterThan(0);
     expect(siteConfig.socials.length).toBeGreaterThan(0);
   });
