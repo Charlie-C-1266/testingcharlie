@@ -104,6 +104,28 @@ export interface WorkProject {
   passing: boolean;
 }
 
+/** A single labelled highlight row in the About section (term → detail). */
+export interface AboutHighlight {
+  /** Short mono label for the row, e.g. "Focus", "Experience", "Open to". */
+  term: string;
+  /** The highlight itself, e.g. "Test automation, CI/CD and DevOps". */
+  detail: string;
+}
+
+/**
+ * About section: a short bio that the nav "about" link targets. Kept
+ * deliberately compact — a couple of intro sentences plus a few labelled
+ * highlights (specialisms, experience, availability).
+ */
+export interface AboutContent {
+  /** Section headline, e.g. "About". */
+  heading: string;
+  /** Intro paragraphs — a couple of short sentences, rendered one `<p>` each. */
+  lead: string[];
+  /** Punchy labelled highlights shown alongside the intro. */
+  highlights: AboutHighlight[];
+}
+
 /** A writing entry (section 7). */
 export interface Post {
   title: string;
@@ -149,6 +171,8 @@ export interface UiLabels {
   prompts: {
     /** Recent-activity section, e.g. "$ ~/recent-activity". */
     recentActivity: string;
+    /** About section, e.g. "$ ~/about". */
+    about: string;
     /** More-work section, e.g. "$ ~/more-work". */
     moreWork: string;
     /** Writing section, e.g. "$ ~/writing". */
@@ -237,6 +261,8 @@ export interface SiteConfig {
   pipeline: PipelineContent;
   /** Marquee keywords (section 3), rendered twice for a seamless loop. */
   marqueeKeywords: string[];
+  /** About / bio band; the nav "about" link scrolls here. */
+  about: AboutContent;
   featured: FeaturedProject;
   work: WorkProject[];
   posts: Post[];

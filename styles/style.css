@@ -423,6 +423,63 @@ button {
   margin: 0 20px;
 }
 
+/* ------------------------------------------------------------- about (bio) -- */
+
+.about {
+  padding: 44px;
+  border-bottom: 1px solid var(--hair);
+}
+
+.about .prompt {
+  margin-bottom: 22px;
+}
+
+.about__grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 44px;
+  align-items: start;
+}
+
+.about__title {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.about__lead {
+  font-size: 16.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-top: 18px;
+  max-width: 480px;
+}
+
+.about__highlights {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.about__term {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  padding-top: 16px;
+  border-top: 1px solid var(--hair2);
+}
+
+.about__detail {
+  margin: 5px 0 0;
+  padding-bottom: 16px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
 /* ---------------------------------------------------------- featured (4) -- */
 
 .featured {
@@ -971,7 +1028,8 @@ button {
   .hero,
   .featured,
   .activity__grid,
-  .work__grid {
+  .work__grid,
+  .about__grid {
     grid-template-columns: 1fr;
   }
 
@@ -986,7 +1044,8 @@ button {
   .featured,
   .activity,
   .work,
-  .writing {
+  .writing,
+  .about {
     padding-left: 32px;
     padding-right: 32px;
   }
@@ -1016,7 +1075,8 @@ button {
   .featured,
   .activity,
   .work,
-  .writing {
+  .writing,
+  .about {
     padding-top: 32px;
     padding-bottom: 32px;
     padding-left: 24px;

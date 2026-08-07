@@ -42,6 +42,7 @@ export const siteConfig: SiteConfig = {
     themeToggle: { toDark: "☾ dark", toLight: "☀ light" },
     prompts: {
       recentActivity: "$ ~/recent-activity",
+      about: "$ ~/about",
       moreWork: "$ ~/more-work",
       writing: "$ ~/writing",
     },
@@ -58,7 +59,7 @@ export const siteConfig: SiteConfig = {
   ],
   socials: [
     { label: "GitHub", href: "https://github.com/Charlie-C-1266" },
-    { label: "LinkedIn", href: "https://www.linkedin.com/" }, // TODO: real profile.
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/charlie2706/" },
   ],
   buildStatus: "build: passing",
   hero: {
@@ -91,6 +92,32 @@ export const siteConfig: SiteConfig = {
     "observability",
     "shift-left",
   ],
+  // About / bio band — the nav "about" link scrolls here. This is PLACEHOLDER
+  // copy: Charlie to replace the TODO lines with real words before we open the
+  // PR. Keep it short — a couple of intro sentences and a few labelled
+  // highlights. The section, styles and tests are already wired; only the
+  // strings below need editing.
+  about: {
+    heading: "About",
+    lead: [
+      // TODO(charlie): 1–2 sentences — who you are and the testing/automation
+      // work you do best (e.g. the kinds of teams, problems and outcomes).
+      "TODO: a couple of sentences introducing yourself and the testing and " +
+        "automation work you do best.",
+      // TODO(charlie): optional second paragraph — how you work, or what you
+      // care about. Delete this line if one paragraph is enough.
+      "TODO: an optional second line on how you work or what you care about — " +
+        "delete this paragraph if one is enough.",
+    ],
+    highlights: [
+      // TODO(charlie): replace each detail with real specifics. Add or remove
+      // rows freely — the list renders whatever is here.
+      { term: "Focus", detail: "TODO: your core specialisms (automation, CI/CD, DevOps…)." },
+      { term: "Experience", detail: "TODO: a notable role, domain or measurable win." },
+      { term: "Toolbox", detail: "TODO: the tools you reach for most." },
+      { term: "Open to", detail: "TODO: what you're currently open to." },
+    ],
+  },
   featured: {
     prompt: "$ ~/featured",
     titleLines: ["caniaffordthat", ".co.uk"],
