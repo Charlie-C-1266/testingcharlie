@@ -13,6 +13,9 @@
     "gen:assets": "node scripts/gen-assets.mjs",
     "gen:screenshot": "tsc && node scripts/gen-screenshot.mjs",
     "watch": "tsc --watch",
+    "lint": "biome check",
+    "lint:fix": "biome check --write",
+    "format": "biome format --write",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
     "serve": "npm run build:site && npx --yes serve public",
     "dev": "npm run build:site && npx --yes serve public",
@@ -21,7 +24,8 @@
     "coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "check": "npm run typecheck && npm run coverage && npm run build:site"
+    "lighthouse": "lhci autorun",
+    "check": "npm run lint && npm run typecheck && npm run coverage && npm run build:site"
   },
   "repository": {
     "type": "git",
@@ -39,6 +43,9 @@
   },
   "homepage": "https://github.com/Charlie-C-1266/testingcharlie#readme",
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@biomejs/biome": "^2.5.7",
+    "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.62.0",
     "@types/node": "^26.1.2",
     "@vitest/coverage-v8": "^4.1.10",

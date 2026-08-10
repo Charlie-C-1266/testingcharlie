@@ -12,14 +12,7 @@
 // Adding pages later (e.g. a blog): drop more *.html into the copy step below
 // and they land alongside index.html in public/ — no other change needed.
 
-import {
-  cp,
-  mkdir,
-  readdir,
-  readFile,
-  rm,
-  writeFile,
-} from "node:fs/promises";
+import { cp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 // Built from src/ by `tsc` (which runs before this script in `build:site`), so
@@ -28,14 +21,7 @@ import { fileURLToPath } from "node:url";
 import { siteConfig } from "../dist/config.js";
 import { loadPosts, renderBlogIndex, renderPostPage } from "./blog.mjs";
 import { applyTemplate, escapeHtml } from "./html-template.mjs";
-import {
-  renderJsonLd,
-  renderManifest,
-  renderRobots,
-  renderSitemap,
-  renderSocialMeta,
-  resolveSeo,
-} from "./seo.mjs";
+import { renderJsonLd, renderManifest, renderRobots, renderSitemap, renderSocialMeta, resolveSeo } from "./seo.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const out = join(root, "public");
@@ -167,9 +153,7 @@ async function main() {
   const posts = await buildBlog();
   await writeSeoFiles(posts);
   const postCount = posts.length;
-  console.log(
-    `Assembled static site → ${relative(root, out)}/ (${postCount} blog post${postCount === 1 ? "" : "s"})`,
-  );
+  console.log(`Assembled static site → ${relative(root, out)}/ (${postCount} blog post${postCount === 1 ? "" : "s"})`);
 }
 
 await main();

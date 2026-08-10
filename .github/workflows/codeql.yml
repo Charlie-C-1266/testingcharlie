@@ -1,0 +1,39 @@
+name: CodeQL
+
+# Static analysis (SAST) of the TypeScript/JavaScript in this repo. This is the
+# appropriate security scanner for a static, backend-less site: it reasons about
+# the source directly, unlike a DAST tool (e.g. OWASP ZAP) which needs a running
+# server, forms, auth or user input to probe — an attack surface this site does
+# not have. Runs on pushes/PRs to main and weekly to pick up newly-shipped
+# CodeQL queries.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "30 6 * * 1" # Mondays 06:30 UTC
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze (javascript-typescript)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@c4dd10e44af883a891fe31ced449bcb4a6728b9b # v3
+        with:
+          languages: javascript-typescript
+          # Default query suite is fine for a codebase this size; no build step
+          # is needed for an interpreted language.
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@c4dd10e44af883a891fe31ced449bcb4a6728b9b # v3

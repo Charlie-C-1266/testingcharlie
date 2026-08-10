@@ -37,12 +37,22 @@ describe("ThemeController.resolveInitial", () => {
   });
 
   it("defaults to light when no media query is available", () => {
-    const controller = new ThemeController({ labels, root: makeRoot(), storage: new MemoryStorage(), media: undefined });
+    const controller = new ThemeController({
+      labels,
+      root: makeRoot(),
+      storage: new MemoryStorage(),
+      media: undefined,
+    });
     expect(controller.resolveInitial()).toBe("light");
   });
 
   it("survives a throwing storage by falling back to media", () => {
-    const controller = new ThemeController({ labels, root: makeRoot(), storage: throwingStorage, media: fakeMedia(true) });
+    const controller = new ThemeController({
+      labels,
+      root: makeRoot(),
+      storage: throwingStorage,
+      media: fakeMedia(true),
+    });
     expect(controller.resolveInitial()).toBe("dark");
   });
 });
@@ -68,7 +78,12 @@ describe("ThemeController state", () => {
   });
 
   it("toggle flips between themes", () => {
-    const controller = new ThemeController({ labels, root: makeRoot(), storage: new MemoryStorage(), media: fakeMedia(false) });
+    const controller = new ThemeController({
+      labels,
+      root: makeRoot(),
+      storage: new MemoryStorage(),
+      media: fakeMedia(false),
+    });
     controller.init();
     expect(controller.toggle()).toBe("dark");
     expect(controller.toggle()).toBe("light");

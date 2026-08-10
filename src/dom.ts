@@ -24,10 +24,7 @@ export interface ElOptions {
  *
  * @example el("a", { class: "chip", text: "GitHub ↗", attrs: { href: url } })
  */
-export function el<K extends keyof HTMLElementTagNameMap>(
-  tag: K,
-  options: ElOptions = {},
-): HTMLElementTagNameMap[K] {
+export function el<K extends keyof HTMLElementTagNameMap>(tag: K, options: ElOptions = {}): HTMLElementTagNameMap[K] {
   const node = document.createElement(tag);
 
   if (options.class !== undefined) {

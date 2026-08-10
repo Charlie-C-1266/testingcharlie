@@ -126,9 +126,7 @@ describe("blog SEO + self-hosted fonts (build-supplied site context)", () => {
 
   it("adds a canonical link and article Open Graph tags to a post", () => {
     const html = renderPostPage(samplePost(), site);
-    expect(html).toContain(
-      '<link rel="canonical" href="https://www.testingcharlie.co.uk/blog/flaky-tests" />',
-    );
+    expect(html).toContain('<link rel="canonical" href="https://www.testingcharlie.co.uk/blog/flaky-tests" />');
     expect(html).toContain('<meta property="og:type" content="article" />');
     expect(html).toContain('<meta property="og:image" content="https://www.testingcharlie.co.uk/og.png" />');
     // Still exactly one inline script — blog pages carry no JSON-LD.
@@ -152,7 +150,7 @@ describe("blog SEO + self-hosted fonts (build-supplied site context)", () => {
 
 describe("renderPostsManifest", () => {
   it("emits a typed module using the display date and post URL", () => {
-    const manifest = renderPostsManifest([samplePost({ title: "Post \"one\"" })]);
+    const manifest = renderPostsManifest([samplePost({ title: 'Post "one"' })]);
     expect(manifest).toContain('import type { Post } from "./types.js";');
     expect(manifest).toContain('url: "/blog/flaky-tests"');
     expect(manifest).toContain('date: "18 Jul 2026"'); // the display date, not ISO

@@ -108,9 +108,7 @@ export function parseFrontmatter(raw) {
 
 /** Estimate reading time at ~200 wpm (code fences and markup don't count). */
 export function computeReadingTime(body) {
-  const prose = body
-    .replace(/```[\s\S]*?```/g, " ")
-    .replace(/[#>*_`~\[\]()!-]/g, " ");
+  const prose = body.replace(/```[\s\S]*?```/g, " ").replace(/[#>*_`~[\]()!-]/g, " ");
   const words = prose.split(/\s+/).filter(Boolean).length;
   return `${Math.max(1, Math.ceil(words / 200))} min`;
 }

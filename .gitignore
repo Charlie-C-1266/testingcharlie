@@ -46,3 +46,6 @@ blob-report/
 # Misc
 *.tmp
 *.bak
+
+# Lighthouse CI
+.lighthouseci/

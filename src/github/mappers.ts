@@ -30,11 +30,7 @@ function eventRepoName(event: GitHubEvent): string | undefined {
  * capped at `limit`. Each commit's timestamp comes from its push event, which
  * is close enough for a "recent activity" list.
  */
-export function mapEventsToCommits(
-  events: readonly GitHubEvent[],
-  now: Date,
-  limit: number,
-): Commit[] {
+export function mapEventsToCommits(events: readonly GitHubEvent[], now: Date, limit: number): Commit[] {
   const commits: Commit[] = [];
   if (limit <= 0) {
     return commits;

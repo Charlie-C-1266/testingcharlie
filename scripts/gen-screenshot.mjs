@@ -30,9 +30,7 @@ const HEIGHT = 800;
 async function main() {
   const { url, screenshot } = siteConfig.featured;
   if (!screenshot.src) {
-    throw new Error(
-      "featured.screenshot.src is unset — nothing to bake. Set it in src/config.ts first.",
-    );
+    throw new Error("featured.screenshot.src is unset — nothing to bake. Set it in src/config.ts first.");
   }
   // "/caniaffordthat.png" → static/caniaffordthat.png (served at the same path).
   const dest = join(staticDir, screenshot.src.replace(/^\//, ""));

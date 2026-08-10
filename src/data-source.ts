@@ -44,9 +44,7 @@ export class LiveDataSource implements DataSource {
     ]);
 
     const commits =
-      commitsResult.status === "fulfilled" && commitsResult.value.length > 0
-        ? commitsResult.value
-        : this.seed.commits;
+      commitsResult.status === "fulfilled" && commitsResult.value.length > 0 ? commitsResult.value : this.seed.commits;
 
     const github =
       profileResult.status === "fulfilled"

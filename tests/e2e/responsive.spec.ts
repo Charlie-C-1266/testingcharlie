@@ -3,9 +3,7 @@ import { expect, test } from "@playwright/test";
 test.describe("responsive layout", () => {
   test("never scrolls horizontally", async ({ page }) => {
     await page.goto("/");
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth - window.innerWidth,
-    );
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(1);
   });
 

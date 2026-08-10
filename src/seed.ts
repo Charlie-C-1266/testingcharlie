@@ -1,10 +1,5 @@
 import { siteConfig } from "./config.js";
-import {
-  contributionCells,
-  contributionTotal,
-  publicRepoCount,
-  recentCommits,
-} from "./github-activity.generated.js";
+import { contributionCells, contributionTotal, publicRepoCount, recentCommits } from "./github-activity.generated.js";
 import type { ActivityData, GitHubSummary } from "./types.js";
 
 // First-paint + fallback data for the recent-activity section. Unlike the old

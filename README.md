@@ -147,14 +147,35 @@ While working, `npm run watch` recompiles on save.
 ## Testing
 
 ```bash
+npm run lint         # Biome lint + format check (no writes)
+npm run lint:fix     # Biome: apply safe lint + format fixes
 npm run typecheck    # tsc for src (build config) and tests (test config)
 npm test             # Vitest unit tests
 npm run coverage     # Vitest with coverage (95% line/branch/fn/stmt gate)
-npm run test:e2e     # Playwright end-to-end (desktop + mobile)
-npm run check        # typecheck + coverage + build, all in one
+npm run test:e2e     # Playwright end-to-end (desktop + mobile, incl. axe-core)
+npm run lighthouse   # Lighthouse budget on the built bundle (a11y/SEO/best-practices)
+npm run check        # lint + typecheck + coverage + build, all in one
 ```
 
 First-time Playwright setup needs a browser: `npx playwright install chromium`.
+`npm run lighthouse` needs a local Chrome (CI uses the runner's; point it at any
+Chrome with `CHROME_PATH=…`). Linting/formatting is [Biome](https://biomejs.dev)
+(`biome.json`) — chosen because it doesn't depend on the classic TypeScript
+compiler API, so it works with the TS 7 native build (unlike eslint/gts).
+
+### Security & quality gates in CI
+
+- **CodeQL** — static analysis (SAST) of the TS/JS on every PR + weekly. This is
+  the right scanner for a static, backend-less site; a DAST tool like OWASP ZAP
+  needs a running attack surface (forms, auth, a server) this site doesn't have.
+- **Dependency audit** — `npm audit --omit=dev` gates the dependencies that
+  actually ship (currently none — everything is build/dev tooling). Dev-tooling
+  advisories are left to Dependabot rather than failing the build.
+- **Lighthouse** — hard-gates best-practices + SEO; accessibility is a warning
+  until the muted-text contrast tokens are re-tuned (tracked separately), since
+  the structural a11y gate is axe-core in the e2e suite.
+- **Pinned actions** — every GitHub Action is pinned to a commit SHA (with a
+  version comment); Dependabot keeps the SHAs current.
 
 ## Deployment
 
