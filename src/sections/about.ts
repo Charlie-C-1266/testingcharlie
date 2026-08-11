@@ -4,10 +4,7 @@ import type { AboutContent, AboutHighlight } from "../types.js";
 
 /** One highlight row: a `<dt>` term followed by its `<dd>` detail. */
 export function renderAboutHighlight(item: AboutHighlight): HTMLElement[] {
-  return [
-    el("dt", { class: "about__term", text: item.term }),
-    el("dd", { class: "about__detail", text: item.detail }),
-  ];
+  return [el("dt", { class: "about__term", text: item.term }), el("dd", { class: "about__detail", text: item.detail })];
 }
 
 /** About band: the short bio + labelled highlights that the nav "about" targets. */
