@@ -50,6 +50,21 @@ describe("renderAbout", () => {
     expect(section.querySelector(".about__term")?.textContent).toBe("Focus");
   });
 
+  it("omits the CTA link when none is configured", () => {
+    const section = renderAbout(sample, "$ ~/about");
+    expect(section.querySelector(".about__cta")).toBeNull();
+  });
+
+  it("renders the CTA as an external anchor, opening safely in a new tab", () => {
+    const withCta: AboutContent = { ...sample, cta: { label: "Full CV → portfolio", href: "https://example.com/cv" } };
+    const cta = renderAbout(withCta, "$ ~/about").querySelector<HTMLAnchorElement>(".about__cta");
+    expect(cta?.tagName).toBe("A");
+    expect(cta?.textContent).toBe("Full CV → portfolio");
+    expect(cta?.getAttribute("href")).toBe("https://example.com/cv");
+    expect(cta?.getAttribute("target")).toBe("_blank");
+    expect(cta?.getAttribute("rel")).toBe("noopener noreferrer");
+  });
+
   it("renders whatever the real config holds", () => {
     const section = renderAbout(siteConfig.about, siteConfig.ui.prompts.about);
     expect(section.querySelectorAll(".about__lead")).toHaveLength(siteConfig.about.lead.length);

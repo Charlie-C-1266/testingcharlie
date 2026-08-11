@@ -480,6 +480,21 @@ button {
   color: var(--muted);
 }
 
+/* Portfolio hand-off link under the intro — the deeper CV lives off-site. */
+.about__cta {
+  display: inline-block;
+  margin-top: 22px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--astrong);
+  transition: color 0.15s ease;
+}
+
+.about__cta:hover,
+.about__cta:focus-visible {
+  color: var(--accent);
+}
+
 /* ---------------------------------------------------------- featured (4) -- */
 
 .featured {

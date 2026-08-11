@@ -1,4 +1,4 @@
-import { el } from "../dom.js";
+import { el, linkTo } from "../dom.js";
 import type { ElChild } from "../dom.js";
 import type { AboutContent, AboutHighlight } from "../types.js";
 
@@ -11,10 +11,14 @@ export function renderAboutHighlight(item: AboutHighlight): HTMLElement[] {
 export function renderAbout(about: AboutContent, prompt: string): HTMLElement {
   const lead: ElChild[] = about.lead.map((para) => el("p", { class: "about__lead", text: para }));
 
-  const body = el("div", {
-    class: "about__body",
-    children: [el("h2", { class: "about__title", text: about.heading }), ...lead],
-  });
+  const bodyChildren: ElChild[] = [el("h2", { class: "about__title", text: about.heading }), ...lead];
+  // Optional CTA (e.g. "full career history → portfolio"). linkTo opens an
+  // off-site href in a new tab with the safe rel; a relative href stays in place.
+  if (about.cta) {
+    bodyChildren.push(linkTo(about.cta.href, "about__cta", [about.cta.label]));
+  }
+
+  const body = el("div", { class: "about__body", children: bodyChildren });
 
   const highlights = el("dl", {
     class: "about__highlights",
