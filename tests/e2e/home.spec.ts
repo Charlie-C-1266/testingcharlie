@@ -13,10 +13,11 @@ test.describe("homepage", () => {
     await expect(page.locator(".hero__kicker")).toContainText("Senior Test Engineer");
   });
 
-  test("renders all eight sections top to bottom", async ({ page }) => {
+  test("renders all nine sections top to bottom", async ({ page }) => {
     await expect(page.locator("header.nav")).toBeVisible();
-    await expect(page.locator("#about.hero")).toBeVisible();
+    await expect(page.locator("#intro.hero")).toBeVisible();
     await expect(page.locator(".marquee")).toBeAttached();
+    await expect(page.locator("#about.about")).toBeVisible();
     await expect(page.locator(".featured")).toBeVisible();
     await expect(page.locator("#activity")).toBeVisible();
     await expect(page.locator("#work")).toBeVisible();

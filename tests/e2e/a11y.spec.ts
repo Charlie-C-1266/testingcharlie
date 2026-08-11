@@ -34,7 +34,7 @@ test.describe("accessibility basics", () => {
 
   test("exposes a keyboard skip link", async ({ page }) => {
     const skip = page.locator(".skip-link");
-    await expect(skip).toHaveAttribute("href", "#about");
+    await expect(skip).toHaveAttribute("href", "#intro");
     await skip.focus();
     await expect(skip).toBeFocused();
   });
@@ -55,7 +55,8 @@ test.describe("accessibility basics", () => {
   });
 
   test("sections are individually labelled for screen readers", async ({ page }) => {
-    await expect(page.locator("#about")).toHaveAttribute("aria-label", "Introduction");
+    await expect(page.locator("#intro")).toHaveAttribute("aria-label", "Introduction");
+    await expect(page.locator("#about")).toHaveAttribute("aria-label", "About");
     await expect(page.locator("#activity")).toHaveAttribute("aria-label", "Recent activity");
     await expect(page.locator("#work")).toHaveAttribute("aria-label", "More work");
     await expect(page.locator("#writing")).toHaveAttribute("aria-label", "Writing");

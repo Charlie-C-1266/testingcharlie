@@ -26,9 +26,9 @@ describe("renderHeroChip", () => {
 });
 
 describe("renderHero", () => {
-  it("is the #about section holding intro copy and the pipeline panel", () => {
+  it("is the #intro section holding intro copy and the pipeline panel", () => {
     const hero = renderHero(siteConfig);
-    expect(hero.getAttribute("id")).toBe("about");
+    expect(hero.getAttribute("id")).toBe("intro");
     expect(hero.querySelector(".hero__kicker")?.textContent).toBe(siteConfig.hero.kicker);
     expect(hero.querySelectorAll(".hero__chips .chip")).toHaveLength(siteConfig.hero.chips.length);
     expect(hero.querySelector(".pipeline")).not.toBeNull();

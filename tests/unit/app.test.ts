@@ -30,9 +30,9 @@ function fixedSource(overrides: Partial<DataSource> = {}): DataSource {
 }
 
 describe("renderPage", () => {
-  it("builds all eight sections in order", () => {
+  it("builds all nine sections in order", () => {
     const sections = renderPage(siteConfig, seedActivity);
-    expect(sections).toHaveLength(8);
+    expect(sections).toHaveLength(9);
     expect(sections[0]?.tagName).toBe("HEADER");
     expect(sections.at(-1)?.tagName).toBe("FOOTER");
   });

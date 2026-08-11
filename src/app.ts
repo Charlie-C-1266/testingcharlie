@@ -6,6 +6,7 @@ import { renderActivity } from "./sections/activity.js";
 import { renderFeatured } from "./sections/featured.js";
 import { renderFooter } from "./sections/footer.js";
 import { updateCommitList } from "./sections/git-log.js";
+import { renderAbout } from "./sections/about.js";
 import { updateGitHubPanel } from "./sections/github-panel.js";
 import { renderHero } from "./sections/hero.js";
 import { renderMarquee } from "./sections/marquee.js";
@@ -19,6 +20,7 @@ export function renderPage(config: SiteConfig, data: ActivityData): HTMLElement[
     renderNav(config),
     renderHero(config),
     renderMarquee(config.marqueeKeywords),
+    renderAbout(config.about, config.ui.prompts.about),
     renderFeatured(config.featured),
     renderActivity(config, data),
     renderWork(config.work, config.ui),

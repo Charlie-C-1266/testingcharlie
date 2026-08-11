@@ -33,7 +33,9 @@ export function renderHero(config: SiteConfig): HTMLElement {
 
   return el("section", {
     class: "hero",
-    attrs: { id: "about", "aria-label": "Introduction" },
+    // The intro/landmark and skip-link target. The nav "about" link points at
+    // the dedicated bio band (src/sections/about.ts), not here.
+    attrs: { id: "intro", "aria-label": "Introduction" },
     children: [left, renderPipeline(pipeline, config.ui)],
   });
 }
