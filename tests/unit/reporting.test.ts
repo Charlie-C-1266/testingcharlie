@@ -1,10 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import {
-  createErrorReporter,
-  installGlobalHandlers,
-  messageOf,
-  type ReportingWindow,
-} from "../../src/reporting.js";
+import { createErrorReporter, installGlobalHandlers, messageOf, type ReportingWindow } from "../../src/reporting.js";
 
 describe("messageOf", () => {
   it("uses the message of an Error", () => {

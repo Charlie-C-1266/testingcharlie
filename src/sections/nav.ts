@@ -39,9 +39,7 @@ export function renderNav(config: SiteConfig): HTMLElement {
     children: [el("span", { class: "status-dot", attrs: { "aria-hidden": "true" } }), buildStatus],
   });
 
-  const links = nav.map((item) =>
-    el("a", { class: "nav__link", text: item.label, attrs: { href: item.href } }),
-  );
+  const links = nav.map((item) => el("a", { class: "nav__link", text: item.label, attrs: { href: item.href } }));
 
   const contact = el("a", {
     class: "chip",

@@ -3,7 +3,12 @@ import { renderCommitList, renderCommitRow, renderTerminal, updateCommitList } f
 import { siteConfig } from "../../../src/config.js";
 import type { Commit } from "../../../src/types.js";
 
-const withUrl: Commit = { hash: "a1f9c2", message: "ci: fix flake", relativeTime: "2h ago", url: "https://x/commit/a1f9c2" };
+const withUrl: Commit = {
+  hash: "a1f9c2",
+  message: "ci: fix flake",
+  relativeTime: "2h ago",
+  url: "https://x/commit/a1f9c2",
+};
 const withoutUrl: Commit = { hash: "7e40b1", message: "feat: shard suite", relativeTime: "yesterday" };
 
 describe("renderCommitRow", () => {

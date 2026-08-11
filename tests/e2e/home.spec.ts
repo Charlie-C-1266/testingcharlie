@@ -52,10 +52,7 @@ test.describe("homepage", () => {
       "content",
       "https://www.testingcharlie.co.uk/og.png",
     );
-    await expect(page.locator('head > meta[name="twitter:card"]')).toHaveAttribute(
-      "content",
-      "summary_large_image",
-    );
+    await expect(page.locator('head > meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
   });
 
   test("ships JSON-LD structured data (Person + WebSite)", async ({ page }) => {

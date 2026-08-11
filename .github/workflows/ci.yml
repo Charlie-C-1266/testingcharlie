@@ -1,14 +1,15 @@
 name: CI
 
 # Runs the same gates as local development:
-#   - check: typecheck (src + tests) → unit tests w/ 95% coverage gate → build
-#   - e2e:   Playwright across desktop + mobile
+#   - check:      Biome lint/format → typecheck (src + tests) → unit tests w/
+#                 95% coverage gate → build, plus a production-dependency audit
+#   - e2e:        Playwright across desktop + mobile (incl. axe-core a11y scan)
+#   - lighthouse: perf/a11y/SEO/best-practices budget on the built bundle
 #
-# Linting to the Google TypeScript Style Guide (gts / typescript-eslint) is
-# intentionally deferred: those tools depend on the classic TypeScript JS
-# compiler API, which the TS 7 native-port build used here does not expose, and
-# they pin `typescript < 6.1`. Revisit once typescript-eslint supports TS 7.
-# In the meantime tsc's strict flags (see tsconfig.json) do the type-level gate.
+# Linting/formatting is via Biome (biome.json), which — unlike gts /
+# typescript-eslint — does not depend on the classic TypeScript compiler API and
+# so works with the TS 7 native-port build used here. `npm run check` runs lint
+# first, so a style or lint regression fails fast before the slower gates.
 
 on:
   push:
@@ -25,23 +26,29 @@ concurrency:
 
 jobs:
   check:
-    name: Typecheck · unit + coverage · build
+    name: Lint · typecheck · unit + coverage · build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Gate only on what actually ships to users. Every dependency here is a
+      # build/dev tool (nothing is served to the browser), so we audit the
+      # production set — currently empty — and leave dev-tooling advisories to
+      # Dependabot rather than failing the build on them.
+      - name: Audit production dependencies
+        run: npm audit --omit=dev
       - run: npm run check
 
   e2e:
     name: End-to-end (Playwright)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 22
           cache: npm
@@ -51,8 +58,32 @@ jobs:
       - run: npm run test:e2e
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: playwright-report
           path: playwright-report/
+          retention-days: 14
+
+  lighthouse:
+    name: Lighthouse budget
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build the deployable bundle
+        run: npm run build:site
+      # ubuntu-latest ships google-chrome-stable, which lhci autodetects.
+      # Budgets + assertions live in lighthouserc.json.
+      - name: Run Lighthouse CI
+        run: npx lhci autorun
+      - name: Upload Lighthouse reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
           retention-days: 14

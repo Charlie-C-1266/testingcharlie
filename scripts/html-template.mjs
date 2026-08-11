@@ -18,9 +18,7 @@ export function escapeHtml(value) {
  * literal `__TOKEN__` shipped to users. Callers pre-escape values for context.
  */
 export function applyTemplate(html, values) {
-  const filled = html.replace(/__([A-Z0-9_]+)__/g, (match, name) =>
-    name in values ? values[name] : match,
-  );
+  const filled = html.replace(/__([A-Z0-9_]+)__/g, (match, name) => (name in values ? values[name] : match));
   const leftover = filled.match(/__[A-Z0-9_]+__/);
   if (leftover) {
     throw new Error(`Unresolved HTML template placeholder: ${leftover[0]}`);
