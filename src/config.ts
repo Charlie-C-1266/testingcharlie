@@ -102,8 +102,7 @@ export const siteConfig: SiteConfig = {
     lead: [
       // TODO(charlie): 1–2 sentences — who you are and the testing/automation
       // work you do best (e.g. the kinds of teams, problems and outcomes).
-      "TODO: a couple of sentences introducing yourself and the testing and " +
-        "automation work you do best.",
+      "TODO: a couple of sentences introducing yourself and the testing and " + "automation work you do best.",
       // TODO(charlie): optional second paragraph — how you work, or what you
       // care about. Delete this line if one paragraph is enough.
       "TODO: an optional second line on how you work or what you care about — " +
