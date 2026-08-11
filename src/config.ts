@@ -92,29 +92,34 @@ export const siteConfig: SiteConfig = {
     "observability",
     "shift-left",
   ],
-  // About / bio band — the nav "about" link scrolls here. This is PLACEHOLDER
-  // copy: Charlie to replace the TODO lines with real words before we open the
-  // PR. Keep it short — a couple of intro sentences and a few labelled
-  // highlights. The section, styles and tests are already wired; only the
-  // strings below need editing.
+  // About / bio band — the nav "about" link scrolls here. This site is the
+  // "maker + writing" home (the tools I build + the blog); the deeper career
+  // history and CV live on the portfolio, linked from `cta` below. Keep this
+  // short: who I am in a sentence or two, then hand off to the portfolio.
   about: {
     heading: "About",
     lead: [
-      // TODO(charlie): 1–2 sentences — who you are and the testing/automation
-      // work you do best (e.g. the kinds of teams, problems and outcomes).
-      "TODO: a couple of sentences introducing yourself and the testing and " + "automation work you do best.",
-      // TODO(charlie): optional second paragraph — how you work, or what you
-      // care about. Delete this line if one paragraph is enough.
-      "TODO: an optional second line on how you work or what you care about — " +
-        "delete this paragraph if one is enough.",
+      "I'm Charlie — a Bristol-based senior test engineer. I build the automation, " +
+        "pipelines and frameworks that let teams ship fast without shipping bugs.",
+      "testingcharlie is where I share the tools I build and write about testing. " +
+        "For my full career history and CV, head over to my portfolio.",
     ],
+    // Points at the portfolio, which owns the detailed work history / CV so this
+    // page doesn't duplicate it. Off-site, so it opens in a new tab.
+    cta: {
+      label: "Full career history & CV → portfolio",
+      href: "https://charlie-c-1266.github.io/my-portfolio/",
+    },
     highlights: [
-      // TODO(charlie): replace each detail with real specifics. Add or remove
-      // rows freely — the list renders whatever is here.
-      { term: "Focus", detail: "TODO: your core specialisms (automation, CI/CD, DevOps…)." },
-      { term: "Experience", detail: "TODO: a notable role, domain or measurable win." },
-      { term: "Toolbox", detail: "TODO: the tools you reach for most." },
-      { term: "Open to", detail: "TODO: what you're currently open to." },
+      {
+        term: "Focus",
+        detail: "Test automation, CI/CD and DevOps — shift-left quality from commit to production.",
+      },
+      {
+        term: "Toolbox",
+        detail: "Playwright, pytest, CI/CD pipelines, contract and load testing, observability.",
+      },
+      { term: "Building", detail: "PiLedger, PrimAITE and caniaffordthat — more in the work below." },
     ],
   },
   featured: {

@@ -115,13 +115,20 @@ export interface AboutHighlight {
 /**
  * About section: a short bio that the nav "about" link targets. Kept
  * deliberately compact — a couple of intro sentences plus a few labelled
- * highlights (specialisms, experience, availability).
+ * highlights (specialisms, tools, current work). The full career history lives
+ * on the portfolio site, linked via `cta`.
  */
 export interface AboutContent {
   /** Section headline, e.g. "About". */
   heading: string;
   /** Intro paragraphs — a couple of short sentences, rendered one `<p>` each. */
   lead: string[];
+  /**
+   * Optional call-to-action link shown under the intro — e.g. a pointer to the
+   * portfolio for the full career history / CV. Rendered as an anchor; an
+   * off-site href opens in a new tab with the safe rel (see {@link linkTo}).
+   */
+  cta?: { label: string; href: string };
   /** Punchy labelled highlights shown alongside the intro. */
   highlights: AboutHighlight[];
 }
