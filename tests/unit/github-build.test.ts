@@ -7,20 +7,8 @@ import {
   fetchPublicActivity,
   levelFromContribution,
   mapRestCommits,
-  relativeTime,
   selectRepos,
 } from "../../scripts/github.mjs";
-
-describe("relativeTime", () => {
-  const now = new Date("2026-07-17T12:00:00Z");
-  it("buckets gaps into git-log-style strings", () => {
-    expect(relativeTime(new Date("2026-07-17T11:59:30Z"), now)).toBe("just now");
-    expect(relativeTime(new Date("2026-07-17T09:00:00Z"), now)).toBe("3h ago");
-    expect(relativeTime(new Date("2026-07-16T12:00:00Z"), now)).toBe("yesterday");
-    expect(relativeTime(new Date("2026-07-13T12:00:00Z"), now)).toBe("4d ago");
-    expect(relativeTime(new Date("2026-06-01T12:00:00Z"), now)).toBe("1mo ago");
-  });
-});
 
 describe("selectRepos", () => {
   it("keeps own, non-fork, non-archived repos in order, capped", () => {
@@ -59,7 +47,6 @@ describe("mapRestCommits", () => {
 });
 
 describe("buildRecentCommits", () => {
-  const now = new Date("2026-07-17T00:00:00Z");
   const records = [
     { sha: "bbbbbb22", message: "older", dateIso: "2026-07-10T00:00:00Z", url: "u2" },
     { sha: "aaaaaa11", message: "newer", dateIso: "2026-07-16T00:00:00Z", url: "u1" },
@@ -67,13 +54,20 @@ describe("buildRecentCommits", () => {
   ];
 
   it("sorts newest-first, de-dupes by SHA, caps, and shortens the hash", () => {
-    const commits = buildRecentCommits(records, now, 5);
+    const commits = buildRecentCommits(records, 5);
     expect(commits.map((c: { message: string }) => c.message)).toEqual(["newer", "older"]);
-    expect(commits[0]).toMatchObject({ hash: "aaaaaa", relativeTime: "yesterday", url: "u1" });
+    expect(commits[0]).toMatchObject({ hash: "aaaaaa", dateIso: "2026-07-16T00:00:00Z", url: "u1" });
+  });
+
+  it("bakes the raw timestamp, never a pre-formatted age", () => {
+    for (const commit of buildRecentCommits(records, 5)) {
+      expect(commit).not.toHaveProperty("relativeTime");
+      expect(commit.dateIso).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    }
   });
 
   it("respects the limit", () => {
-    expect(buildRecentCommits(records, now, 1)).toHaveLength(1);
+    expect(buildRecentCommits(records, 1)).toHaveLength(1);
   });
 });
 

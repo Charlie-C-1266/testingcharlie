@@ -6,16 +6,16 @@ import type { Commit, ContributionCell } from "./types.js";
 
 /** Recent commits read from the repos most recently pushed to, newest first. */
 export const recentCommits: Commit[] = [
-  {"hash":"e019c7","message":"Show real GitHub activity instead of fabricated seed data (#4)","relativeTime":"14m ago","url":"https://github.com/Charlie-C-1266/testingcharlie/commit/e019c74456894b015940245aef10849bedd223b5"},
-  {"hash":"d0eb64","message":"Add a build-time Markdown blog flow (#3)","relativeTime":"2h ago","url":"https://github.com/Charlie-C-1266/testingcharlie/commit/d0eb64414cc14d758ca066d56ae5a12b90ddf150"},
-  {"hash":"48d598","message":"Vercel static deploy (#2)","relativeTime":"3h ago","url":"https://github.com/Charlie-C-1266/testingcharlie/commit/48d598a1145707bb7670f8babcb82a8083a35308"},
-  {"hash":"fa0305","message":"Deploy to Vercel from a clean static bundle (public/) (#1)","relativeTime":"4h ago","url":"https://github.com/Charlie-C-1266/testingcharlie/commit/fa030598a55076984d4b112d340e7186517a9bf6"},
-  {"hash":"bcb1ac","message":"Update generated files","relativeTime":"10h ago","url":"https://github.com/Charlie-C-1266/github-stats/commit/bcb1ac4fdf726fb75fed215c23cb8292ac380cb2"},
-  {"hash":"31838e","message":"Updates","relativeTime":"4d ago","url":"https://github.com/Charlie-C-1266/my-portfolio/commit/31838e4b82e2bdc9978d550901483443884dbc43"},
+  {"hash":"70ddb6","message":"Add a quick toggle that masks every amount on screen (#179)","dateIso":"2026-08-24T15:03:18Z","url":"https://github.com/Charlie-C-1266/PiLedger/commit/70ddb6f3926facdc6c5db7f26d1330e806b03fdb"},
+  {"hash":"f01182","message":"Update generated files","dateIso":"2026-08-20T01:17:13Z","url":"https://github.com/Charlie-C-1266/github-stats/commit/f01182e8989a5ab3dcff1f4ede9897603253ffaa"},
+  {"hash":"4c2c72","message":"Initial commit","dateIso":"2026-08-19T14:46:37Z","url":"https://github.com/Charlie-C-1266/Testing_Template/commit/4c2c72b06a6aa06044069cab9751f605bdbb2966"},
+  {"hash":"88055f","message":"Add Python dev container test-harness template","dateIso":"2026-08-19T14:37:33Z","url":"https://github.com/Charlie-C-1266/Testing_Template/commit/88055fed5258ac831b0e13225be7d5288493696a"},
+  {"hash":"30644c","message":"Update generated files","dateIso":"2026-08-12T02:02:07Z","url":"https://github.com/Charlie-C-1266/github-stats/commit/30644c227afd37c879f5d74dff3b2b48674200fb"},
+  {"hash":"d4f8bd","message":"About: real bio that hands career history off to the portfolio (#20)","dateIso":"2026-08-11T16:08:47Z","url":"https://github.com/Charlie-C-1266/testingcharlie/commit/d4f8bdd3c7c07946f437916acf9cb2f0bb33ee35"},
 ];
 
 /** Public repository count. */
-export const publicRepoCount = 8;
+export const publicRepoCount = 10;
 
 /** Canonical GitHub profile URL. */
 export const profileUrl = "https://github.com/Charlie-C-1266";
@@ -132,4 +132,4 @@ export const contributionCells: ContributionCell[] = [
 ];
 
 /** When this data was baked (ISO), for provenance. */
-export const generatedAt = "2026-07-17T19:31:04.144Z";
+export const generatedAt = "2026-08-24T15:26:45.501Z";

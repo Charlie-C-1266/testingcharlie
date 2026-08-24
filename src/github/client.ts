@@ -21,8 +21,6 @@ export interface GitHubClientOptions {
   fetch?: typeof fetch;
   /** API base URL (default: https://api.github.com). */
   baseUrl?: string;
-  /** Clock, for turning commit timestamps into relative strings. */
-  now?: () => Date;
 }
 
 const DEFAULT_BASE_URL = "https://api.github.com";
@@ -37,13 +35,11 @@ export class GitHubClient {
   private readonly username: string;
   private readonly fetchFn: typeof fetch;
   private readonly baseUrl: string;
-  private readonly now: () => Date;
 
   constructor(options: GitHubClientOptions) {
     this.username = options.username;
     this.fetchFn = options.fetch ?? fetch.bind(globalThis);
     this.baseUrl = options.baseUrl ?? DEFAULT_BASE_URL;
-    this.now = options.now ?? ((): Date => new Date());
   }
 
   /** Fetch the user's public profile (repo count, handle, …). */
@@ -55,7 +51,7 @@ export class GitHubClient {
   async getRecentCommits(limit = 5): Promise<Commit[]> {
     const path = `/users/${encodeURIComponent(this.username)}/events/public?per_page=${EVENTS_PAGE_SIZE}`;
     const events = await this.request<GitHubEvent[]>(path);
-    return mapEventsToCommits(events, this.now(), limit);
+    return mapEventsToCommits(events, limit);
   }
 
   private async request<T>(path: string): Promise<T> {
