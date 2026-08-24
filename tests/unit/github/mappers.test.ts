@@ -2,8 +2,6 @@ import { describe, expect, it } from "vitest";
 import { heatLevel, mapEventsToCommits } from "../../../src/github/mappers.js";
 import type { GitHubEvent } from "../../../src/github/api-types.js";
 
-const now = new Date("2026-07-17T12:00:00Z");
-
 function pushEvent(
   commits: { sha: string; message: string }[],
   createdAt = "2026-07-17T10:00:00Z",
@@ -17,7 +15,7 @@ function pushEvent(
 }
 
 describe("mapEventsToCommits", () => {
-  it("flattens push commits newest-first with short hashes and relative time", () => {
+  it("flattens push commits newest-first with short hashes and the push timestamp", () => {
     const events = [
       pushEvent(
         [
@@ -28,9 +26,9 @@ describe("mapEventsToCommits", () => {
         "charlie/repo",
       ),
     ];
-    const commits = mapEventsToCommits(events, now, 5);
+    const commits = mapEventsToCommits(events, 5);
     expect(commits).toHaveLength(2);
-    expect(commits[0]).toMatchObject({ hash: "bbbbbb", message: "second", relativeTime: "2h ago" });
+    expect(commits[0]).toMatchObject({ hash: "bbbbbb", message: "second", dateIso: "2026-07-17T10:00:00Z" });
     expect(commits[0]?.url).toBe("https://github.com/charlie/repo/commit/bbbbbbbb2222");
     expect(commits[1]?.hash).toBe("aaaaaa");
   });
@@ -41,22 +39,18 @@ describe("mapEventsToCommits", () => {
       { type: "PushEvent", created_at: "2026-07-17T09:00:00Z", payload: {} },
       pushEvent([{ sha: "cccccccc3333", message: "kept" }]),
     ];
-    const commits = mapEventsToCommits(events, now, 5);
+    const commits = mapEventsToCommits(events, 5);
     expect(commits).toHaveLength(1);
     expect(commits[0]?.message).toBe("kept");
   });
 
   it("omits the url when the event has no repo", () => {
-    const commits = mapEventsToCommits([pushEvent([{ sha: "dddddddd4444", message: "no repo" }])], now, 5);
+    const commits = mapEventsToCommits([pushEvent([{ sha: "dddddddd4444", message: "no repo" }])], 5);
     expect(commits[0]?.url).toBeUndefined();
   });
 
   it("uses only the first line of a commit message", () => {
-    const commits = mapEventsToCommits(
-      [pushEvent([{ sha: "eeeeeeee5555", message: "subject line\n\nbody text" }])],
-      now,
-      5,
-    );
+    const commits = mapEventsToCommits([pushEvent([{ sha: "eeeeeeee5555", message: "subject line\n\nbody text" }])], 5);
     expect(commits[0]?.message).toBe("subject line");
   });
 
@@ -68,8 +62,8 @@ describe("mapEventsToCommits", () => {
         { sha: "3", message: "c" },
       ]),
     ];
-    expect(mapEventsToCommits(events, now, 2)).toHaveLength(2);
-    expect(mapEventsToCommits(events, now, 0)).toHaveLength(0);
+    expect(mapEventsToCommits(events, 2)).toHaveLength(2);
+    expect(mapEventsToCommits(events, 0)).toHaveLength(0);
   });
 });
 

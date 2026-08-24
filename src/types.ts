@@ -277,14 +277,15 @@ export interface SiteConfig {
 }
 
 /**
- * A commit row in the git-log terminal. This is a view model: `relativeTime`
- * is already formatted (seed data hard-codes it; the GitHub mapper computes it
- * from a real timestamp), so the renderer only ever displays strings.
+ * A commit row in the git-log terminal. The timestamp is carried as a raw ISO
+ * string, NOT a pre-formatted "2h ago": the age is computed at render time so a
+ * statically built page never claims a two-week-old commit was "just now".
  */
 export interface Commit {
   hash: string;
   message: string;
-  relativeTime: string;
+  /** Commit authorship time, ISO 8601. Formatted for display by the renderer. */
+  dateIso: string;
   url?: string;
 }
 

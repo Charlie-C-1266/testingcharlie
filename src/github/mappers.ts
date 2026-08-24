@@ -1,4 +1,3 @@
-import { relativeTime } from "../time.js";
 import type { Commit, HeatLevel } from "../types.js";
 import type { GitHubEvent } from "./api-types.js";
 
@@ -28,9 +27,10 @@ function eventRepoName(event: GitHubEvent): string | undefined {
 /**
  * Flatten recent public PushEvents into commit view models, newest first,
  * capped at `limit`. Each commit's timestamp comes from its push event, which
- * is close enough for a "recent activity" list.
+ * is close enough for a "recent activity" list. The raw ISO string is carried
+ * through unformatted — the renderer turns it into an age at paint time.
  */
-export function mapEventsToCommits(events: readonly GitHubEvent[], now: Date, limit: number): Commit[] {
+export function mapEventsToCommits(events: readonly GitHubEvent[], limit: number): Commit[] {
   const commits: Commit[] = [];
   if (limit <= 0) {
     return commits;
@@ -40,7 +40,6 @@ export function mapEventsToCommits(events: readonly GitHubEvent[], now: Date, li
     if (event.type !== "PushEvent" || !event.payload.commits) {
       continue;
     }
-    const time = relativeTime(new Date(event.created_at), now);
     const repo = eventRepoName(event);
 
     // GitHub lists a push's commits oldest-first; reverse for newest-first.
@@ -48,7 +47,7 @@ export function mapEventsToCommits(events: readonly GitHubEvent[], now: Date, li
       const commit: Commit = {
         hash: raw.sha.slice(0, SHORT_HASH_LENGTH),
         message: firstLine(raw.message),
-        relativeTime: time,
+        dateIso: event.created_at,
       };
       if (repo) {
         commit.url = commitUrl(repo, raw.sha);

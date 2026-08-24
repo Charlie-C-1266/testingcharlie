@@ -8,7 +8,7 @@ import type { ActivityData } from "../../src/types.js";
 import { fakeMedia, MemoryStorage } from "./helpers.js";
 
 const liveData: ActivityData = {
-  commits: [{ hash: "live99", message: "live: hydrated", relativeTime: "5m ago" }],
+  commits: [{ hash: "live99", message: "live: hydrated", dateIso: "2026-08-24T11:55:00Z" }],
   github: { ...seedActivity.github, repoCount: 99, profileUrl: "https://github.com/live" },
 };
 

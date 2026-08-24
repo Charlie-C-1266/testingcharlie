@@ -78,10 +78,38 @@ sourced in two ways:
 
 **Refreshed live at runtime** — `LiveDataSource` re-fetches the repo count and
 profile in the browser so they stay current between deploys. Any failure
-(offline, rate-limited) is swallowed and the baked data stays.
+(offline, rate-limited) is swallowed and the baked data stays. The commit feed
+is *not* among these: it hydrates from `GET /users/{user}/events/public`, which
+no longer carries commit details, so it always falls back to the baked list.
+Keeping it fresh is the scheduled rebuild's job (below).
+
+**Timestamps are formatted at render, not at build.** `Commit.dateIso` carries
+the raw ISO string and the age ("2h ago") is computed against the visitor's
+clock in `renderCommitRow`. Baking the formatted string instead would freeze it:
+a page built a fortnight ago would still be claiming its newest commit was
+"just now".
 
 > The build step is resilient: a network/token failure leaves the last committed
 > `github-activity.generated.ts` untouched and never blocks a build.
+
+### Keeping it fresh (`refresh-github-activity.yml`)
+
+Because the data is baked at build time and Vercel only builds on a push to
+`main`, a quiet fortnight would otherwise leave a fortnight-old commit feed.
+[`.github/workflows/refresh-github-activity.yml`](.github/workflows/refresh-github-activity.yml)
+pings a **Vercel Deploy Hook** daily (06:17 UTC) so the site re-bakes on a
+schedule — commits, calendar and repo count together. Nothing is committed; the
+generated file in git is only the local/offline fallback.
+
+One-off setup:
+
+1. Vercel → Project → Settings → Git → **Deploy Hooks** → create one on `main`
+   and copy the URL.
+2. GitHub → repo Settings → Secrets and variables → Actions → add it as
+   `VERCEL_DEPLOY_HOOK_URL`. Anyone holding that URL can trigger a deploy, so it
+   belongs in a secret.
+
+Run it on demand any time from the **Actions** tab (`workflow_dispatch`).
 
 ### Enabling the contribution graph (`GH_CONTRIB_TOKEN`)
 
@@ -98,8 +126,9 @@ public repo count — no fabricated grid.
    `npm run refresh:github`), then commit the regenerated
    `src/github-activity.generated.ts`.
 
-Each deploy re-bakes fresh data. The calendar reflects the last 12 months as of
-the build.
+Each deploy re-bakes fresh data — including the daily scheduled one above. The
+calendar reflects the last 12 months as of the build, and is the one piece that
+*only* a rebuild can refresh (the browser has no token).
 
 ## Writing (the blog)
 

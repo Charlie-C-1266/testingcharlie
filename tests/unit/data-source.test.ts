@@ -5,7 +5,7 @@ import type { ActivityData, Commit } from "../../src/types.js";
 import type { GitHubUser } from "../../src/github/api-types.js";
 
 const seed: ActivityData = {
-  commits: [{ hash: "seed01", message: "seed commit", relativeTime: "1w ago" }],
+  commits: [{ hash: "seed01", message: "seed commit", dateIso: "2026-08-17T12:00:00Z" }],
   github: {
     handle: "@seed",
     profileUrl: "https://github.com/seed",
@@ -15,7 +15,7 @@ const seed: ActivityData = {
   },
 };
 
-const liveCommits: Commit[] = [{ hash: "live01", message: "live commit", relativeTime: "2h ago" }];
+const liveCommits: Commit[] = [{ hash: "live01", message: "live commit", dateIso: "2026-08-24T10:00:00Z" }];
 const liveProfile: GitHubUser = {
   login: "charlie",
   html_url: "https://github.com/charlie",

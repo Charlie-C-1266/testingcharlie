@@ -16,24 +16,6 @@
 // network fetchers; scripts/build-github-activity.mjs is the thin I/O shell.
 
 const SHORT_HASH_LENGTH = 6;
-const MINUTE = 60;
-const HOUR = 60 * MINUTE;
-const DAY = 24 * HOUR;
-const WEEK = 7 * DAY;
-
-/** Mirror of src/time.ts relativeTime, for baking commit timestamps at build. */
-export function relativeTime(date, now) {
-  const seconds = Math.max(0, Math.floor((now.getTime() - date.getTime()) / 1000));
-  if (seconds < MINUTE) return "just now";
-  if (seconds < HOUR) return `${Math.floor(seconds / MINUTE)}m ago`;
-  if (seconds < DAY) return `${Math.floor(seconds / HOUR)}h ago`;
-  const days = Math.floor(seconds / DAY);
-  if (days === 1) return "yesterday";
-  if (seconds < WEEK) return `${days}d ago`;
-  if (days < 30) return `${Math.floor(days / 7)}w ago`;
-  if (days < 365) return `${Math.floor(days / 30)}mo ago`;
-  return `${Math.floor(days / 365)}y ago`;
-}
 
 /** First line of a commit message (git-log --oneline style). */
 function firstLine(message) {
@@ -80,8 +62,12 @@ export function mapRestCommits(restCommits) {
 /**
  * Merge commit records from several repos into newest-first commit view models,
  * de-duplicated by SHA and capped at `limit`.
+ *
+ * The ISO timestamp is baked verbatim rather than a formatted "2h ago": the
+ * page formats it against the visitor's clock, so a build that goes a fortnight
+ * without a rebuild shows a two-week-old age instead of freezing on "just now".
  */
-export function buildRecentCommits(records, now, limit) {
+export function buildRecentCommits(records, limit) {
   const seen = new Set();
   return records
     .filter((r) => r.dateIso && !seen.has(r.sha) && seen.add(r.sha))
@@ -90,7 +76,7 @@ export function buildRecentCommits(records, now, limit) {
     .map((r) => ({
       hash: r.sha.slice(0, SHORT_HASH_LENGTH),
       message: r.message,
-      relativeTime: relativeTime(new Date(r.dateIso), now),
+      dateIso: r.dateIso,
       url: r.url,
     }));
 }
@@ -133,7 +119,6 @@ export function calendarCells(weeks, weekCount) {
 /** Fetch public recent commits + repo count + profile URL (no token needed). */
 export async function fetchPublicActivity(login, options = {}) {
   const fetchImpl = options.fetch ?? fetch;
-  const now = options.now ?? new Date();
   const commitLimit = options.commitLimit ?? 6;
   const maxRepos = options.maxRepos ?? 4;
   const perRepo = options.perRepo ?? 4;
@@ -167,7 +152,7 @@ export async function fetchPublicActivity(login, options = {}) {
   );
 
   return {
-    commits: buildRecentCommits(perRepoCommits.flat(), now, commitLimit),
+    commits: buildRecentCommits(perRepoCommits.flat(), commitLimit),
     publicRepoCount: user.public_repos,
     profileUrl: user.html_url,
   };

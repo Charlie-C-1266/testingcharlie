@@ -56,10 +56,10 @@ describe("GitHubClient.getRecentCommits", () => {
     expect(commits[0]).toMatchObject({ hash: "abcdef", message: "live commit" });
   });
 
-  it("defaults the limit and uses the default clock", async () => {
+  it("defaults the limit and carries the push timestamp through unformatted", async () => {
     const client = new GitHubClient({ username: "octocat", fetch: fakeFetch(jsonResponse(events)) });
     const commits = await client.getRecentCommits();
-    expect(commits[0]?.relativeTime).toBe("just now");
+    expect(commits[0]?.dateIso).toBe(events[0]?.created_at);
   });
 });
 
