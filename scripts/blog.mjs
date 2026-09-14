@@ -16,8 +16,16 @@
 //   blurb: One-line summary shown on the homepage and blog index.
 //   description: Optional longer <meta name="description">. Falls back to blurb.
 //   tags: [playwright, ci]      # optional
+//   draft: true                 # optional; omit or `false` to publish
 //   ---
 //   Markdown body…
+//
+// Drafts are excluded from every build output (homepage manifest, /blog index
+// and the post page itself), so an unfinished file in content/blog/ can never
+// reach the site. `_template.md` carries `draft: true`, which makes "copy the
+// template" produce an unpublished post by default — publishing is then a
+// deliberate one-line edit. To preview drafts locally, build with
+// BLOG_INCLUDE_DRAFTS=1.
 
 import { readFileSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
@@ -104,6 +112,18 @@ export function parseFrontmatter(raw) {
   }
 
   return { data, body: raw.slice(match[0].length).trim() };
+}
+
+/**
+ * Read a frontmatter value as a boolean. `parseFrontmatter` is deliberately
+ * string-only, so `draft: true` arrives as the string "true"; anything other
+ * than a case-insensitive "true" is false (a missing key included).
+ *
+ * @param {string | string[] | undefined} value
+ * @returns {boolean}
+ */
+export function parseBooleanField(value) {
+  return typeof value === "string" && value.trim().toLowerCase() === "true";
 }
 
 /** Estimate reading time at ~200 wpm (code fences and markup don't count). */
@@ -278,10 +298,17 @@ export const generatedPosts: Post[] = [${posts.length ? `\n${entries}\n` : ""}];
 
 /**
  * Read and parse every Markdown post in {@link CONTENT_DIR}. Files whose name
- * starts with `_` (e.g. _template.md) are skipped. Posts are returned newest
+ * starts with `_` (e.g. _template.md) are skipped, as are posts marked
+ * `draft: true` — presence in content/blog/ is otherwise publication, so the
+ * flag is what separates "written" from "published". Posts are returned newest
  * first. Each record carries both raw and display fields plus rendered `bodyHtml`.
+ *
+ * @param {string} [dir] Directory of Markdown posts.
+ * @param {{ includeDrafts?: boolean }} [options] Set `includeDrafts` to keep
+ *   draft posts — used by the BLOG_INCLUDE_DRAFTS=1 local preview build and by
+ *   the guard test that checks nothing unpublished reached the manifest.
  */
-export async function loadPosts(dir = CONTENT_DIR) {
+export async function loadPosts(dir = CONTENT_DIR, { includeDrafts = process.env.BLOG_INCLUDE_DRAFTS === "1" } = {}) {
   let files;
   try {
     files = await readdir(dir);
@@ -300,6 +327,8 @@ export async function loadPosts(dir = CONTENT_DIR) {
       const blurb = data.blurb ?? "";
       return {
         slug,
+        sourceFile: name,
+        draft: parseBooleanField(data.draft),
         url: `/blog/${slug}`,
         title,
         blurb,
@@ -313,5 +342,5 @@ export async function loadPosts(dir = CONTENT_DIR) {
     }),
   );
 
-  return posts.sort((a, b) => b.date.localeCompare(a.date));
+  return posts.filter((post) => includeDrafts || !post.draft).sort((a, b) => b.date.localeCompare(a.date));
 }

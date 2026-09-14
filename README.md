@@ -142,11 +142,29 @@ To publish a post:
 ```bash
 cp content/blog/_template.md content/blog/2026-07-18-my-post.md   # name it <date>-<slug>.md
 $EDITOR content/blog/2026-07-18-my-post.md                        # fill in frontmatter + body
-npm run dev                                                       # build + preview locally
+BLOG_INCLUDE_DRAFTS=1 npm run dev                                 # preview while it's a draft
+$EDITOR content/blog/2026-07-18-my-post.md                        # delete the `draft: true` line
+npm run dev                                                       # build + preview for real
 ```
 
 The leading `yyyy-mm-dd-` in the filename is stripped for the URL, so that file
 is served at **`/blog/my-post`**. Files whose name starts with `_` are ignored.
+
+**Drafts.** Otherwise, *presence in `content/blog/` is publication* — so
+`_template.md` carries `draft: true` and a copy of it starts unpublished.
+A draft is excluded from the manifest, the `/blog` index and its own page, and
+publishing is the deliberate act of deleting that one line. Preview a draft
+with `BLOG_INCLUDE_DRAFTS=1`.
+
+This matters because `src/posts.generated.ts` is **tracked but generated**: any
+build regenerates it from whatever sits in `content/blog/`, including files git
+doesn't track. Before the draft flag, building with an unfinished post on disk
+silently baked its title and blurb into that tracked file, and committing it
+published the post. CI cannot catch this — a fresh checkout has no untracked
+files — so `tests/unit/blog-drafts.test.ts` fails the local `npm run check` if a
+draft, or a post whose source git doesn't track, ever reaches the manifest. (If
+you previewed with `BLOG_INCLUDE_DRAFTS=1`, run `git checkout --
+src/posts.generated.ts` before committing.)
 
 What the build does (`npm run build:site`), in order:
 
@@ -158,7 +176,8 @@ What the build does (`npm run build:site`), in order:
    a `public/blog/index.html` listing.
 
 Frontmatter fields: `title`, `date` (ISO `yyyy-mm-dd`), `blurb`, optional
-`description` (meta; falls back to `blurb`) and optional `tags`. Post images
+`description` (meta; falls back to `blurb`), optional `tags` and optional
+`draft` (`true` keeps the post out of every build output). Post images
 must be self-hosted (the CSP allows same-origin and `data:` images only).
 
 ## Getting started
