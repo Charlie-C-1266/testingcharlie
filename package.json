@@ -44,13 +44,13 @@
   "homepage": "https://github.com/Charlie-C-1266/testingcharlie#readme",
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
-    "@biomejs/biome": "^2.5.12",
+    "@biomejs/biome": "^2.5.13",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.63.0",
-    "@types/node": "^26.4.1",
+    "@types/node": "^26.5.1",
     "@vitest/coverage-v8": "^5.0.0",
     "jsdom": "^30.0.1",
-    "marked": "^18.0.11",
+    "marked": "^18.0.12",
     "serve": "^14.2.6",
     "typescript": "^7.0.2",
     "vitest": "^5.0.0"
