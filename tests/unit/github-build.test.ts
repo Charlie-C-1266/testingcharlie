@@ -5,10 +5,28 @@ import {
   buildRecentCommits,
   calendarCells,
   fetchPublicActivity,
+  isAutomatedCommit,
   levelFromContribution,
   mapRestCommits,
   selectRepos,
 } from "../../scripts/github.mjs";
+
+type RestAuthor = { login?: string; type?: string } | null;
+
+/** A `/commits` REST item carrying only the fields the build reads. */
+function restCommit(sha: string, message: string, date: string, author: RestAuthor = null, email = "dev@example.com") {
+  return {
+    sha,
+    html_url: `https://github.com/a/r/commit/${sha}`,
+    parents: [{}],
+    author,
+    commit: { message, author: { date, email } },
+  };
+}
+
+const DATE = "2026-10-15T20:21:51Z";
+const OWNER: RestAuthor = { login: "Charlie-C-1266", type: "User" };
+const DEPENDABOT: RestAuthor = { login: "dependabot[bot]", type: "Bot" };
 
 describe("selectRepos", () => {
   it("keeps own, non-fork, non-archived repos in order, capped", () => {
@@ -43,6 +61,85 @@ describe("mapRestCommits", () => {
     const mapped = mapRestCommits(rest);
     expect(mapped).toHaveLength(1);
     expect(mapped[0]).toMatchObject({ sha: "aaaaaa11", message: "feat: thing", dateIso: "2026-07-10T00:00:00Z" });
+  });
+
+  it("drops automated commits and keeps the human ones in order", () => {
+    const mapped = mapRestCommits([
+      restCommit("bump0001", "build(deps): Bump qs and express (#49)", DATE, DEPENDABOT),
+      restCommit("real0001", "Add a quick toggle (#179)", DATE, OWNER),
+      restCommit("gen00001", "Update generated files", DATE, null, "github-stats[bot]@jstrieb.github.io"),
+      restCommit("real0002", "Fix the hero copy", DATE, OWNER),
+    ]);
+    expect(mapped.map((c: { sha: string }) => c.sha)).toEqual(["real0001", "real0002"]);
+  });
+});
+
+describe("isAutomatedCommit", () => {
+  it.each([
+    [
+      "a linked bot account (Dependabot)",
+      restCommit(
+        "d1",
+        "build(deps): Bump qs (#49)",
+        DATE,
+        DEPENDABOT,
+        "49699333+dependabot[bot]@users.noreply.github.com",
+      ),
+    ],
+    [
+      "a [bot] login even when the account type is missing",
+      restCommit("r1", "chore: update", DATE, { login: "renovate[bot]" }),
+    ],
+    [
+      "a Bot account type even without a [bot] login",
+      restCommit("b1", "sync", DATE, { login: "some-app", type: "Bot" }),
+    ],
+    [
+      "an unlinked bot known only by its [bot] email",
+      restCommit("g1", "Update generated files", DATE, null, "github-stats[bot]@jstrieb.github.io"),
+    ],
+    [
+      "github-actions committing from its noreply address",
+      restCommit("a1", "chore: refresh", DATE, null, "41898282+github-actions[bot]@users.noreply.github.com"),
+    ],
+  ])("flags %s", (_label, item) => {
+    expect(isAutomatedCommit(item)).toBe(true);
+  });
+
+  it.each([
+    ["the profile owner's own commit", restCommit("c1", "Add a quick toggle (#179)", DATE, OWNER, "me@example.com")],
+    [
+      "a commit authored through an assistant's account",
+      restCommit(
+        "c2",
+        "Add Python dev container template",
+        DATE,
+        { login: "claude", type: "User" },
+        "noreply@anthropic.com",
+      ),
+    ],
+    [
+      "a human commit from an email not linked to any account",
+      restCommit("c3", "Updates", DATE, null, "me@example.com"),
+    ],
+    [
+      "a human commit whose message reads like a bot's",
+      restCommit("c4", "build(deps): Bump vitest by hand", DATE, OWNER),
+    ],
+  ])("keeps %s", (_label, item) => {
+    expect(isAutomatedCommit(item)).toBe(false);
+  });
+
+  it("judges the author, not the committer (bots that commit human work keep it)", () => {
+    const item = {
+      ...restCommit("c5", "Rebased feature", DATE, OWNER),
+      committer: { login: "github-actions[bot]", type: "Bot" },
+    };
+    expect(isAutomatedCommit(item)).toBe(false);
+  });
+
+  it("treats a commit with no author identity at all as human", () => {
+    expect(isAutomatedCommit({ sha: "x", parents: [{}], commit: { message: "initial" } })).toBe(false);
   });
 });
 
@@ -122,17 +219,91 @@ describe("fetchPublicActivity", () => {
     ],
   };
 
+  type Fixtures = { repos: unknown[]; commitsByRepo: Record<string, unknown[]> };
+
   /** A fetch that records every request's URL + headers and serves fixtures by path. */
-  function recordingFetch(): { fetchImpl: typeof fetch; calls: { url: string; headers: Record<string, string> }[] } {
+  function recordingFetch(fixtures: Fixtures = { repos, commitsByRepo }): {
+    fetchImpl: typeof fetch;
+    calls: { url: string; headers: Record<string, string> }[];
+  } {
     const calls: { url: string; headers: Record<string, string> }[] = [];
     const fetchImpl = (async (url: string, init: { headers?: Record<string, string> } = {}) => {
       calls.push({ url, headers: init.headers ?? {} });
       const repo = url.match(/\/repos\/([^/]+\/[^/]+)\/commits/)?.[1] ?? "";
-      const body = url.includes("/commits") ? (commitsByRepo[repo] ?? []) : url.includes("/repos?") ? repos : user;
+      const body = url.includes("/commits")
+        ? (fixtures.commitsByRepo[repo] ?? [])
+        : url.includes("/repos?")
+          ? fixtures.repos
+          : user;
       return { ok: true, status: 200, json: async () => body };
     }) as unknown as typeof fetch;
     return { fetchImpl, calls };
   }
+
+  /** A public, own, active repo as the repos endpoint lists it. */
+  const publicRepo = (full_name: string) => ({ full_name, fork: false, archived: false, private: false });
+  /** `count` Dependabot commits, all newer than any human work in the fixtures. */
+  const bumps = (repo: string, count: number) =>
+    Array.from({ length: count }, (_, i) =>
+      restCommit(`${repo}-bump${i}`, `build(deps): Bump dep${i}`, `2026-10-18T0${i}:00:00Z`, DEPENDABOT),
+    );
+  const messages = (commits: { message: string }[]) => commits.map((c) => c.message);
+
+  it("reads past a run of bot commits and caps how many commits one repo contributes", async () => {
+    const { fetchImpl, calls } = recordingFetch({
+      // Pushed order: bot-only repo first, then a repo whose newest 8 commits are bumps.
+      repos: [publicRepo("me/stats"), publicRepo("me/site"), publicRepo("me/app")],
+      commitsByRepo: {
+        "me/stats": [restCommit("gen1", "Update generated files", "2026-10-19T03:00:00Z", null, "stats[bot]@x.io")],
+        "me/site": [
+          ...bumps("site", 8),
+          restCommit("site-h1", "site: real work", "2026-10-09T00:00:00Z", OWNER),
+          restCommit("site-h2", "site: older work", "2026-10-08T00:00:00Z", OWNER),
+        ],
+        "me/app": Array.from({ length: 6 }, (_, i) =>
+          restCommit(`app-h${i}`, `app: change ${i}`, `2026-10-1${5 - i}T00:00:00Z`, OWNER),
+        ),
+      },
+    });
+    const result = await fetchPublicActivity("me", { fetch: fetchImpl, baseUrl, now });
+
+    // Each repo is read deep enough to see past the run of bumps.
+    expect(calls.filter((c) => c.url.includes("/commits")).every((c) => c.url.includes("per_page=30"))).toBe(true);
+    // Six human commits: me/app's six are capped at four, and me/site's work behind the bumps fills the rest.
+    expect(messages(result.commits)).toEqual([
+      "app: change 0",
+      "app: change 1",
+      "app: change 2",
+      "app: change 3",
+      "site: real work",
+      "site: older work",
+    ]);
+  });
+
+  it("scans past bot-only repos crowding the top of the pushed order", async () => {
+    const botRepos = ["me/b1", "me/b2", "me/b3", "me/b4"];
+    const { fetchImpl } = recordingFetch({
+      repos: [...botRepos.map(publicRepo), publicRepo("me/real")],
+      commitsByRepo: {
+        ...Object.fromEntries(botRepos.map((repo) => [repo, bumps(repo, 3)])),
+        "me/real": [restCommit("real1", "The work that matters", "2026-09-01T00:00:00Z", OWNER)],
+      },
+    });
+    const result = await fetchPublicActivity("me", { fetch: fetchImpl, baseUrl, now });
+
+    expect(messages(result.commits)).toEqual(["The work that matters"]);
+  });
+
+  it("bakes no bot commits even when they are all that's recent", async () => {
+    const { fetchImpl } = recordingFetch({
+      repos: [publicRepo("me/site")],
+      commitsByRepo: { "me/site": bumps("site", 5) },
+    });
+    const result = await fetchPublicActivity("me", { fetch: fetchImpl, baseUrl, now });
+
+    // An honest empty feed, never a changelog of dependency bumps.
+    expect(result.commits).toEqual([]);
+  });
 
   it("authenticates every REST call and returns real public activity when a token is set", async () => {
     const { fetchImpl, calls } = recordingFetch();

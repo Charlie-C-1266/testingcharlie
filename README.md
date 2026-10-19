@@ -69,6 +69,13 @@ sourced in two ways:
 
 - **recent commits** ← read from the repos you most recently pushed to
   (`GET /repos/{repo}/commits`), merged newest-first, merge-commits dropped.
+  **Bot commits are dropped too** (Dependabot, github-actions, scheduled
+  generated-file commits): a commit counts as automated when its author is a
+  `Bot` account, has a `[bot]` login, or commits from a `[bot]@…` email. The
+  committer and the message are ignored, so your own squash-merged PRs and
+  commits co-authored with an assistant stay in. To see past runs of bot
+  commits, each repo is read 30 commits deep and the 8 most recently pushed
+  repos are scanned, with at most 4 commits taken from any one repo.
   NB: the public *events* endpoint no longer returns commit details, so we can't
   derive commit messages from it — hence reading the repos directly.
 - **public repo count** and **profile URL** ← `GET /users/{user}`.
