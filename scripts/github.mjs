@@ -41,14 +41,38 @@ export function selectRepos(repos, max) {
   );
 }
 
+/** A GitHub App / bot account login, e.g. `dependabot[bot]`, `github-actions[bot]`. */
+const BOT_LOGIN = /\[bot\]$/i;
+/** A bot's commit email, e.g. `github-stats[bot]@jstrieb.github.io`. */
+const BOT_EMAIL = /\[bot\]@/i;
+
+/**
+ * True when a `/commits` REST item was authored by automation rather than a
+ * person. Judged on the commit's *author* identity, never its message:
+ *   - a linked bot account → `author.type === "Bot"` / a `[bot]` login suffix
+ *     (Dependabot, github-actions, Renovate…);
+ *   - a bot with no linked account (`author: null`, e.g. a scheduled action
+ *     committing as `github-stats[bot]@…`) → a `[bot]` in the commit email.
+ * The committer is deliberately ignored: a human's PR squash-merged through the
+ * web UI is committed by `web-flow`, and that work belongs in the feed.
+ */
+export function isAutomatedCommit(item) {
+  if (item.author?.type === "Bot") return true;
+  if (BOT_LOGIN.test(item.author?.login ?? "")) return true;
+  return BOT_EMAIL.test(item.commit.author?.email ?? "");
+}
+
 /**
  * Map a repo's `/commits` REST response to lightweight commit records, dropping
- * merge commits (2+ parents) for a clean `git log --no-merges` style feed.
+ * merge commits (2+ parents) for a clean `git log --no-merges` style feed, and
+ * automated commits so dependency bumps and generated-file churn never crowd
+ * out real work.
  */
 export function mapRestCommits(restCommits) {
   const mapped = [];
   for (const item of restCommits) {
     if ((item.parents?.length ?? 0) > 1) continue; // skip merge commits
+    if (isAutomatedCommit(item)) continue; // skip bot commits
     mapped.push({
       sha: item.sha,
       message: firstLine(item.commit.message),
@@ -116,12 +140,22 @@ export function calendarCells(weeks, weekCount) {
   return cells;
 }
 
-/** Fetch public recent commits + repo count + profile URL (no token needed). */
+/**
+ * Fetch public recent commits + repo count + profile URL (no token needed).
+ *
+ * Bot commits are filtered out, so the fetch reaches further than the feed it
+ * fills: `scanDepth` commits are read per repo to see past a run of Dependabot
+ * merges, and `maxRepos` covers repos whose recent pushes are all automated
+ * (they still sort first by `pushed_at`). Each repo then contributes at most
+ * `perRepo` commits, so one busy repo can't fill the whole panel. Cost is
+ * 2 + `maxRepos` requests per bake.
+ */
 export async function fetchPublicActivity(login, options = {}) {
   const fetchImpl = options.fetch ?? fetch;
   const commitLimit = options.commitLimit ?? 6;
-  const maxRepos = options.maxRepos ?? 4;
+  const maxRepos = options.maxRepos ?? 8;
   const perRepo = options.perRepo ?? 4;
+  const scanDepth = options.scanDepth ?? 30;
   const base = options.baseUrl ?? "https://api.github.com";
   const headers = { Accept: "application/vnd.github+json", "User-Agent": "testingcharlie-build" };
   // Authenticate REST when a token is available: lifts the 60/hr unauthenticated
@@ -145,8 +179,8 @@ export async function fetchPublicActivity(login, options = {}) {
   const selected = selectRepos(repos, maxRepos);
   const perRepoCommits = await Promise.all(
     selected.map((repo) =>
-      getJson(`/repos/${repo}/commits?per_page=${perRepo}`)
-        .then(mapRestCommits)
+      getJson(`/repos/${repo}/commits?per_page=${scanDepth}`)
+        .then((restCommits) => mapRestCommits(restCommits).slice(0, perRepo))
         .catch(() => []),
     ),
   );
