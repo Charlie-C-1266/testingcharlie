@@ -2,11 +2,16 @@ import { el, linkTo } from "../dom.js";
 import type { ElChild } from "../dom.js";
 import type { Post, UiLabels } from "../types.js";
 
-/** A writing row: title + blurb on the left, date + read time on the right. */
+/**
+ * A writing row: title + blurb on the left, date + read time on the right.
+ * Named by its content rather than an aria-label, so the blurb reaches screen
+ * readers too (WCAG 2.5.3 Label in Name); the spaces keep that name readable.
+ */
 export function renderPostRow(post: Post): HTMLAnchorElement {
   const left = el("span", {
     children: [
       el("span", { class: "post__title", text: post.title }),
+      " ",
       el("span", { class: "post__blurb", text: post.blurb }),
     ],
   });
@@ -16,9 +21,7 @@ export function renderPostRow(post: Post): HTMLAnchorElement {
     children: [post.date, el("br"), post.readingTime],
   });
 
-  return linkTo(post.url, "post", [left, meta], {
-    "aria-label": `${post.title} — ${post.date}, ${post.readingTime}`,
-  });
+  return linkTo(post.url, "post", [left, " ", meta]);
 }
 
 /** Placeholder shown when there are no posts yet. */

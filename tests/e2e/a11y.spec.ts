@@ -26,6 +26,21 @@ test.describe("accessibility basics", () => {
     }
   });
 
+  test("content links are named by their visible text (WCAG 2.5.3)", async ({ page }) => {
+    // Label in Name, checked directly rather than via axe (whose rule was
+    // experimental before 4.14): an aria-label that drops visible text, such as
+    // a card's description or a post's blurb, or text that runs together
+    // without spaces fails here.
+    for (const selector of [".commit", ".project-card", ".post"]) {
+      const links = page.locator(selector);
+      await expect(links.first()).toBeVisible();
+      for (const link of await links.all()) {
+        const visible = (await link.innerText()).replace(/\s+/g, " ").trim();
+        await expect(link).toHaveAccessibleName(visible);
+      }
+    }
+  });
+
   test("has a single h1 and labelled landmarks", async ({ page }) => {
     await expect(page.locator("h1")).toHaveCount(1);
     await expect(page.locator("nav[aria-label='Primary']")).toBeVisible();

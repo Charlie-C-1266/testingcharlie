@@ -15,9 +15,15 @@ describe("renderWorkCard", () => {
   it("shows a passing pill and an external link", () => {
     const card = renderWorkCard(passing, siteConfig.ui.passing);
     expect(card.getAttribute("target")).toBe("_blank");
-    expect(card.getAttribute("aria-label")).toBe("Sentinel — Node · Playwright · 2024");
     expect(card.querySelector(".pass--sm")?.textContent).toBe(`✓ ${siteConfig.ui.passing}`);
     expect(card.querySelector(".project-card__title")?.textContent).toBe("Sentinel");
+  });
+
+  it("is named by its content, so the description reaches screen readers", () => {
+    const card = renderWorkCard(passing, siteConfig.ui.passing);
+    expect(card.hasAttribute("aria-label")).toBe(false);
+    expect(card.textContent).toContain(passing.description);
+    expect(card.textContent).toContain(passing.meta);
   });
 
   it("omits the passing pill when not passing", () => {

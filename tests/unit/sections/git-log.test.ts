@@ -19,8 +19,13 @@ describe("renderCommitRow", () => {
     const row = renderCommitRow(withUrl, now);
     expect(row.getAttribute("href")).toBe(withUrl.url);
     expect(row.getAttribute("target")).toBe("_blank");
-    expect(row.getAttribute("aria-label")).toBe("a1f9c2 ci: fix flake, 2h ago");
     expect(row.querySelector(".commit__hash")?.textContent).toBe("a1f9c2");
+  });
+
+  it("is named by its visible text, spaced so the name reads cleanly", () => {
+    const row = renderCommitRow(withUrl, now);
+    expect(row.hasAttribute("aria-label")).toBe(false);
+    expect(row.textContent).toBe("a1f9c2 ci: fix flake 2h ago");
   });
 
   it("falls back to a hash anchor when no url is set", () => {

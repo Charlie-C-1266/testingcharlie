@@ -2,7 +2,11 @@ import { el, linkTo } from "../dom.js";
 import type { ElChild } from "../dom.js";
 import type { UiLabels, WorkProject } from "../types.js";
 
-/** A project link-card (title + optional passing pill + description + meta). */
+/**
+ * A project link-card (title + optional passing pill + description + meta).
+ * Named by its content rather than an aria-label, so the description reaches
+ * screen readers too (WCAG 2.5.3 Label in Name).
+ */
 export function renderWorkCard(project: WorkProject, passingLabel: string): HTMLAnchorElement {
   const headChildren: ElChild[] = [el("h3", { class: "project-card__title", text: project.name })];
   if (project.passing) {
@@ -15,8 +19,7 @@ export function renderWorkCard(project: WorkProject, passingLabel: string): HTML
     el("div", { class: "project-card__meta", text: project.meta }),
   ];
 
-  const attrs = { "aria-label": `${project.name} — ${project.meta}` };
-  return linkTo(project.url, "project-card", children, attrs);
+  return linkTo(project.url, "project-card", children);
 }
 
 /** More-work section (6): a two-up grid of project cards. */
