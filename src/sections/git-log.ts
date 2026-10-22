@@ -7,16 +7,22 @@ import { trafficLights } from "./chrome.js";
  * A single commit row: short hash · message · relative time. The age is
  * derived from the commit's ISO timestamp against `now` on every render, so the
  * displayed age stays honest however long ago the page was built.
+ *
+ * The link is named by its visible text (WCAG 2.5.3 Label in Name), not an
+ * aria-label. The plain spaces keep that name readable ("a1f9c2 ci: fix flake
+ * 2h ago" rather than "a1f9c2ci: fix flake2h ago"); the grid row collapses
+ * them, so they don't change the layout.
  */
 export function renderCommitRow(commit: Commit, now: Date = new Date()): HTMLElement {
   const age = relativeTime(new Date(commit.dateIso), now);
   const children = [
     el("span", { class: "commit__hash", text: commit.hash }),
+    " ",
     el("span", { class: "commit__msg", text: commit.message }),
+    " ",
     el("span", { class: "commit__time", text: age }),
   ];
-  const label = `${commit.hash} ${commit.message}, ${age}`;
-  return linkTo(commit.url ?? "#", "commit", children, { "aria-label": label });
+  return linkTo(commit.url ?? "#", "commit", children);
 }
 
 /** The scrolling body of the terminal holding all commit rows. */

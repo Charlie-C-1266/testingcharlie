@@ -17,8 +17,13 @@ describe("renderPostRow", () => {
     expect(row.querySelector(".post__title")?.textContent).toBe(post.title);
     expect(row.querySelector(".post__blurb")?.textContent).toBe(post.blurb);
     expect(row.querySelector(".post__meta")?.textContent).toBe("Feb 20266 min");
-    expect(row.getAttribute("aria-label")).toBe("The flaky test lie — Feb 2026, 6 min");
     expect(row.getAttribute("href")).toBe("#");
+  });
+
+  it("is named by its content, so the blurb reaches screen readers", () => {
+    const row = renderPostRow(post);
+    expect(row.hasAttribute("aria-label")).toBe(false);
+    expect(row.textContent).toContain(`${post.title} ${post.blurb} `);
   });
 });
 
