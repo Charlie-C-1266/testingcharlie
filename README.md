@@ -1,7 +1,7 @@
 # testingcharlie.co.uk
 
 Personal site for **Charlie** — senior test engineer, automation & DevOps. A
-single-page portfolio in the *editorial-studio-meets-CI-dashboard* style:
+single-page portfolio in the _editorial-studio-meets-CI-dashboard_ style:
 confident display type with a test-engineer flavour (a live CI/CD pipeline
 strip, a `git log` panel, a GitHub contribution grid, coverage/flake stats and
 passing badges). Ships with a light/dark theme toggle.
@@ -76,7 +76,7 @@ sourced in two ways:
   commits co-authored with an assistant stay in. To see past runs of bot
   commits, each repo is read 30 commits deep and the 8 most recently pushed
   repos are scanned, with at most 4 commits taken from any one repo.
-  NB: the public *events* endpoint no longer returns commit details, so we can't
+  NB: the public _events_ endpoint no longer returns commit details, so we can't
   derive commit messages from it — hence reading the repos directly.
 - **public repo count** and **profile URL** ← `GET /users/{user}`.
 - **contribution calendar + yearly total** ← GitHub **GraphQL** (`contributions
@@ -86,7 +86,7 @@ sourced in two ways:
 **Refreshed live at runtime** — `LiveDataSource` re-fetches the repo count and
 profile in the browser so they stay current between deploys. Any failure
 (offline, rate-limited) is swallowed and the baked data stays. The commit feed
-is *not* among these: it hydrates from `GET /users/{user}/events/public`, which
+is _not_ among these: it hydrates from `GET /users/{user}/events/public`, which
 no longer carries commit details, so it always falls back to the baked list.
 Keeping it fresh is the scheduled rebuild's job (below).
 
@@ -135,7 +135,7 @@ public repo count — no fabricated grid.
 
 Each deploy re-bakes fresh data — including the daily scheduled one above. The
 calendar reflects the last 12 months as of the build, and is the one piece that
-*only* a rebuild can refresh (the browser has no token).
+_only_ a rebuild can refresh (the browser has no token).
 
 ## Writing (the blog)
 
@@ -157,7 +157,7 @@ npm run dev                                                       # build + prev
 The leading `yyyy-mm-dd-` in the filename is stripped for the URL, so that file
 is served at **`/blog/my-post`**. Files whose name starts with `_` are ignored.
 
-**Drafts.** Otherwise, *presence in `content/blog/` is publication* — so
+**Drafts.** Otherwise, _presence in `content/blog/` is publication_ — so
 `_template.md` carries `draft: true` and a copy of it starts unpublished.
 A draft is excluded from the manifest, the `/blog` index and its own page, and
 publishing is the deliberate act of deleting that one line. Preview a draft
@@ -239,7 +239,7 @@ is no framework preset and no server.
 
 `npm run build:site` compiles the TypeScript and then runs
 `scripts/build-site.mjs`, which assembles a **`public/`** directory containing
-*only* what the browser needs:
+_only_ what the browser needs:
 
 ```
 public/
@@ -313,4 +313,6 @@ Everything below is placeholder content from the design handoff — edit
 Related: Charlie's portfolio lives at
 <https://charlie-c-1266.github.io/my-portfolio/> and is slated for a restyle to
 match this site's token system.
+
+```
 ```
