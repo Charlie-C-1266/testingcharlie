@@ -4,6 +4,13 @@ import type { Post } from "./types.js";
 
 export const generatedPosts: Post[] = [
   {
+    title: "Why I'm building CanIAffordThat.co.uk",
+    blurb: "The logic and thought behind creating CanIAffordThat.co.uk",
+    date: "14 Nov 2026",
+    readingTime: "6 min",
+    url: "/blog/why-i-built-caniaffordthat",
+  },
+  {
     title: "Hello, world: how this blog works",
     blurb: "A quick tour of the write-in-Markdown, render-at-build-time flow that powers these posts.",
     date: "17 Jul 2026",
