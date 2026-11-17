@@ -41,7 +41,7 @@ jobs:
       - name: Re-bake the featured screenshot
         run: npm run gen:screenshot
       - name: Open a PR if the screenshot drifted
-        uses: peter-evans/create-pull-request@15733dbdfeedb4f7fdb73d13c6f5ac83b710fab8 # v8.1.2
+        uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
         with:
           branch: chore/refresh-featured-screenshot
           base: main
