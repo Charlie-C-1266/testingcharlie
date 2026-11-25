@@ -18,7 +18,6 @@ export function renderPipeline(pipeline: PipelineContent, ui: UiLabels): HTMLEle
   const head = el("div", {
     class: "pipeline__head",
     children: [
-      el("span", { text: ui.pipeline.title }),
       el("span", {
         class: "pipeline__status",
         children: [el("span", { class: "status-dot", attrs: { "aria-hidden": "true" } }), ui.pipeline.status],

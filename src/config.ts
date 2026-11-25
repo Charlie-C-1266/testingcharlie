@@ -46,7 +46,7 @@ export const siteConfig: SiteConfig = {
       moreWork: "$ ~/more-work",
       writing: "$ ~/writing",
     },
-    pipeline: { title: "ci/cd pipeline", status: "passing" },
+    pipeline: { status: "passing" },
     github: { title: "github", profileLink: "view profile →" },
     terminal: { command: "git log --oneline", branch: "main ✓" },
     passing: "passing",
