@@ -321,14 +321,21 @@ button {
 
 /* CI/CD pipeline panel. */
 .pipeline {
+  position: relative;
   background: var(--surface);
   border: 1px solid var(--hair);
   border-radius: 14px;
   padding: 22px;
 }
 
+/* Pinned to the panel's top-right corner, level with the first row of stages.
+   The stages row keeps room free on its right (see padding-right below), so
+   the stages wrap before they ever crowd the status. */
 .pipeline__status {
-  margin-left: auto;
+  position: absolute;
+  top: 22px;
+  right: 14px;
+  height: 32px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -341,6 +348,7 @@ button {
   display: flex;
   align-items: center;
   gap: 6px;
+  padding-right: 76px;
   flex-wrap: wrap;
   font-family: var(--font-mono);
   font-size: 12px;

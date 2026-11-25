@@ -31,8 +31,8 @@ export function renderPipeline(pipeline: PipelineContent, ui: UiLabels): HTMLEle
     return el("span", { class: "pipeline__step", children: [sep, pill] });
   });
 
-  // The status rides at the end of the stages row (pushed right by CSS), so the
-  // panel has no separate heading line and it follows "deploy" when stages wrap.
+  // The status is placed in the panel's top-right corner by CSS, so the
+  // panel has no separate heading line; it stays in the DOM after the stages.
   const stages = el("div", { class: "pipeline__stages", children: [...stageChildren, status] });
   const stats = el("div", { class: "pipeline__stats", children: pipeline.stats.map(renderStat) });
 
