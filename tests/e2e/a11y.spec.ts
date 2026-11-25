@@ -73,7 +73,7 @@ test.describe("accessibility basics", () => {
     await expect(page.locator("#intro")).toHaveAttribute("aria-label", "Introduction");
     await expect(page.locator("#about")).toHaveAttribute("aria-label", "About");
     await expect(page.locator("#activity")).toHaveAttribute("aria-label", "Recent activity");
-    await expect(page.locator("#work")).toHaveAttribute("aria-label", "More work");
+    await expect(page.locator("#work")).toHaveAttribute("aria-label", "Work");
     await expect(page.locator("#writing")).toHaveAttribute("aria-label", "Writing");
   });
 });

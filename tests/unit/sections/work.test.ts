@@ -36,7 +36,7 @@ describe("renderWork", () => {
   it("is the #work section with a card per project", () => {
     const work = renderWork(siteConfig.work, siteConfig.ui);
     expect(work.getAttribute("id")).toBe("work");
-    expect(work.querySelector(".prompt")?.textContent).toBe(siteConfig.ui.prompts.moreWork);
+    expect(work.querySelector(".prompt")?.textContent).toBe(siteConfig.ui.prompts.work);
     expect(work.querySelectorAll(".project-card")).toHaveLength(siteConfig.work.length);
   });
 });

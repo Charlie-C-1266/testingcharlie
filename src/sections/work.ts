@@ -26,9 +26,9 @@ export function renderWorkCard(project: WorkProject, passingLabel: string): HTML
 export function renderWork(projects: WorkProject[], ui: UiLabels): HTMLElement {
   return el("section", {
     class: "work",
-    attrs: { id: "work", "aria-label": "More work" },
+    attrs: { id: "work", "aria-label": "Work" },
     children: [
-      el("div", { class: "prompt", text: ui.prompts.moreWork }),
+      el("div", { class: "prompt", text: ui.prompts.work }),
       el("div", {
         class: "work__grid",
         children: projects.map((project) => renderWorkCard(project, ui.passing)),
