@@ -346,6 +346,12 @@ button {
   font-size: 12px;
 }
 
+.pipeline__step {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .pipeline__sep {
   color: var(--faint);
 }

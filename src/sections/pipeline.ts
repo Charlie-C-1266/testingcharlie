@@ -20,12 +20,15 @@ export function renderPipeline(pipeline: PipelineContent, ui: UiLabels): HTMLEle
     children: [el("span", { class: "status-dot", attrs: { "aria-hidden": "true" } }), ui.pipeline.status],
   });
 
-  const stageChildren = pipeline.stages.flatMap((stage, index) => {
+  // Each arrow is grouped with the stage it leads into, so when the row wraps
+  // the arrow moves down with that stage instead of dangling at a line end.
+  const stageChildren = pipeline.stages.map((stage, index) => {
     const pill = el("span", { class: "pass", text: `✓ ${stage}` });
-    if (index === pipeline.stages.length - 1) {
-      return [pill];
+    if (index === 0) {
+      return pill;
     }
-    return [pill, el("span", { class: "pipeline__sep", text: "›", attrs: { "aria-hidden": "true" } })];
+    const sep = el("span", { class: "pipeline__sep", text: "›", attrs: { "aria-hidden": "true" } });
+    return el("span", { class: "pipeline__step", children: [sep, pill] });
   });
 
   // The status rides at the end of the stages row (pushed right by CSS), so the
