@@ -260,8 +260,6 @@ export interface SiteConfig {
   ui: UiLabels;
   nav: NavItem[];
   socials: SocialLink[];
-  /** Nav status line, e.g. "build: passing". */
-  buildStatus: string;
   hero: HeroContent;
   pipeline: PipelineContent;
   /** Marquee keywords (section 3), rendered twice for a seamless loop. */

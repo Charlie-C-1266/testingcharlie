@@ -44,6 +44,7 @@ describe("renderBrowser", () => {
 describe("renderFeatured", () => {
   it("renders check-prefixed pills and an external project link", () => {
     const featured = renderFeatured(siteConfig.featured);
+    expect(featured.id).toBe("featured");
     const pills = featured.querySelectorAll(".featured__pills .pass");
     expect(pills).toHaveLength(siteConfig.featured.pills.length);
     expect(pills[0]?.textContent).toBe(`✓ ${siteConfig.featured.pills[0]}`);

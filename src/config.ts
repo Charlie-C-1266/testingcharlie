@@ -52,16 +52,18 @@ export const siteConfig: SiteConfig = {
     passing: "passing",
     writingEmpty: "coming soon",
   },
+  // Keep these in the order their sections appear on the page (an e2e test
+  // checks this against the rendered layout).
   nav: [
+    { label: "about", href: "#about" },
+    { label: "featured", href: "#featured" },
     { label: "work", href: "#work" },
     { label: "writing", href: "#writing" },
-    { label: "about", href: "#about" },
   ],
   socials: [
     { label: "GitHub", href: "https://github.com/Charlie-C-1266" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/charlie2706/" },
   ],
-  buildStatus: "build: passing",
   hero: {
     kicker: "Charlie — Senior Test Engineer · Automation & DevOps",
     titleLines: ["I break things", "so users don't"],

@@ -89,9 +89,28 @@ test.describe("homepage", () => {
   });
 
   test("has working section anchor links in the nav", async ({ page }) => {
+    await expect(page.locator(".nav__link", { hasText: "about" })).toHaveAttribute("href", "#about");
+    await expect(page.locator(".nav__link", { hasText: "featured" })).toHaveAttribute("href", "#featured");
     await expect(page.locator(".nav__link", { hasText: "work" })).toHaveAttribute("href", "#work");
     await expect(page.locator(".nav__link", { hasText: "writing" })).toHaveAttribute("href", "#writing");
-    await expect(page.locator(".nav__link", { hasText: "about" })).toHaveAttribute("href", "#about");
+  });
+
+  test("lists nav links in the order their sections appear on the page", async ({ page }) => {
+    const positions = await page.locator(".nav__link").evaluateAll((links) =>
+      links.map((link) => {
+        const target = document.querySelector(link.getAttribute("href") ?? "");
+        return target ? target.getBoundingClientRect().top + window.scrollY : Number.NaN;
+      }),
+    );
+    expect(positions.length).toBeGreaterThan(0);
+    for (const top of positions) {
+      expect(Number.isNaN(top)).toBe(false);
+    }
+    expect(positions).toEqual([...positions].sort((a, b) => a - b));
+  });
+
+  test("does not show a build status in the header", async ({ page }) => {
+    await expect(page.locator("header.nav")).not.toContainText("build");
   });
 
   test("marquee duplicates its keyword list for a seamless loop", async ({ page }) => {

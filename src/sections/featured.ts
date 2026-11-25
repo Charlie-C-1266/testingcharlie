@@ -54,7 +54,7 @@ export function renderFeatured(featured: FeaturedProject): HTMLElement {
 
   return el("section", {
     class: "featured",
-    attrs: { "aria-label": "Featured project" },
+    attrs: { id: "featured", "aria-label": "Featured project" },
     children: [left, renderBrowser(featured)],
   });
 }
