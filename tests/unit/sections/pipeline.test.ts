@@ -18,7 +18,7 @@ describe("renderPipeline", () => {
     const stages = siteConfig.pipeline.stages;
     expect(panel.querySelectorAll(".pipeline__stages .pass")).toHaveLength(stages.length);
     expect(panel.querySelectorAll(".pipeline__sep")).toHaveLength(stages.length - 1);
-    expect(panel.querySelector(".pipeline__head")?.textContent).toContain(siteConfig.ui.pipeline.title);
+    expect(panel.querySelector(".pipeline__head")?.textContent).toBe(siteConfig.ui.pipeline.status);
   });
 
   it("renders every stat cell", () => {

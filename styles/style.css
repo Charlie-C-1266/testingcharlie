@@ -329,7 +329,7 @@ button {
 
 .pipeline__head {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   font-family: var(--font-mono);
   font-size: 11px;

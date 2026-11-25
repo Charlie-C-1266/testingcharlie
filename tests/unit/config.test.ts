@@ -55,7 +55,7 @@ describe("siteConfig", () => {
     for (const prompt of Object.values(ui.prompts)) {
       expect(prompt).toMatch(/^\$ ~\//);
     }
-    expect(ui.pipeline.title).toBeTruthy();
+    expect(ui.pipeline.status).toBeTruthy();
     expect(ui.github.title).toBeTruthy();
     expect(ui.terminal.command).toBeTruthy();
     expect(ui.writingEmpty).toBeTruthy();
