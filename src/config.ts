@@ -43,7 +43,7 @@ export const siteConfig: SiteConfig = {
     prompts: {
       recentActivity: "$ ~/recent-activity",
       about: "$ ~/about",
-      moreWork: "$ ~/more-work",
+      work: "$ ~/work",
       writing: "$ ~/writing",
     },
     pipeline: { status: "passing" },

@@ -180,8 +180,8 @@ export interface UiLabels {
     recentActivity: string;
     /** About section, e.g. "$ ~/about". */
     about: string;
-    /** More-work section, e.g. "$ ~/more-work". */
-    moreWork: string;
+    /** Work section, e.g. "$ ~/work" (matches the nav "work" link). */
+    work: string;
     /** Writing section, e.g. "$ ~/writing". */
     writing: string;
   };
