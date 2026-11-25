@@ -327,31 +327,20 @@ button {
   padding: 22px;
 }
 
-.pipeline__head {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--muted2);
-}
-
 .pipeline__status {
+  margin-left: auto;
   display: flex;
   align-items: center;
   gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   color: var(--astrong);
-  text-transform: none;
-  letter-spacing: 0;
 }
 
 .pipeline__stages {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-top: 16px;
   flex-wrap: wrap;
   font-family: var(--font-mono);
   font-size: 12px;
