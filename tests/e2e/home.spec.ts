@@ -95,8 +95,12 @@ test.describe("homepage", () => {
   });
 
   test("marquee duplicates its keyword list for a seamless loop", async ({ page }) => {
-    const items = page.getByTestId("marquee-track").locator(".marquee__item");
-    await expect(items).toHaveCount(16);
+    // Count-independent: the second half of the track must repeat the first,
+    // so editing marqueeKeywords in config doesn't break this test.
+    const texts = await page.getByTestId("marquee-track").locator(".marquee__item").allTextContents();
+    const half = texts.length / 2;
+    expect(half).toBeGreaterThan(0);
+    expect(texts.slice(half)).toEqual(texts.slice(0, half));
   });
 
   test("footer exposes a mailto contact", async ({ page }) => {

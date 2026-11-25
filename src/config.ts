@@ -85,12 +85,11 @@ export const siteConfig: SiteConfig = {
   marqueeKeywords: [
     "playwright",
     "pytest",
-    "CI/CD",
-    "flaky-test triage",
-    "contract testing",
-    "load testing",
-    "observability",
-    "shift-left",
+    "GitHub Actions",
+    "TypeScript",
+    "Python",
+    "self-hosting",
+    "reinforcement learning",
   ],
   // About / bio band — the nav "about" link scrolls here. This site is the
   // "maker + writing" home (the tools I build + the blog); the deeper career
