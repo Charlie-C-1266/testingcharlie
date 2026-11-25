@@ -187,8 +187,6 @@ export interface UiLabels {
   };
   /** CI/CD pipeline panel (hero, right column). */
   pipeline: {
-    /** Panel heading, e.g. "ci/cd pipeline". */
-    title: string;
     /** Status word beside the green dot, e.g. "passing". */
     status: string;
   };

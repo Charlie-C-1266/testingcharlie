@@ -303,8 +303,8 @@ Everything below is placeholder content from the design handoff — edit
   `src` to fall back to the striped placeholder.
 - **Projects** — `work[]`.
 - **UI strings** — every fixed on-page label (section prompts like `$ ~/writing`,
-  the "get in touch" button, the theme-toggle text, the `ci/cd pipeline` /
-  `github` panel titles, the "coming soon" placeholder) lives in `ui`, so there
+  the "get in touch" button, the theme-toggle text, the pipeline status /
+  `github` panel title, the "coming soon" placeholder) lives in `ui`, so there
   are no words hard-coded in the render layer to hunt down.
 - **Writing** — posts are authored as Markdown in `content/blog/` and generated
   at build time; see [Writing](#writing-the-blog). Remove the sample post
