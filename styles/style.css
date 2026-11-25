@@ -233,13 +233,6 @@ button {
   font-size: 12px;
 }
 
-.status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--astrong);
-}
-
 .nav__link {
   color: var(--muted);
   transition: color 0.15s ease;

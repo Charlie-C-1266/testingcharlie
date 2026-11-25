@@ -23,11 +23,13 @@ describe("renderBrand", () => {
 });
 
 describe("renderNav", () => {
-  it("renders the status, links, toggle and contact chip", () => {
+  it("renders the links, toggle and contact chip", () => {
     const nav = renderNav(siteConfig);
     expect(nav.tagName).toBe("HEADER");
-    expect(nav.querySelector(".status")?.textContent).toContain("build: passing");
-    expect(nav.querySelectorAll(".nav__link")).toHaveLength(siteConfig.nav.length);
+    expect(nav.querySelector(".status-dot")).toBeNull();
+    expect(nav.textContent).not.toContain("build");
+    const links = [...nav.querySelectorAll(".nav__link")];
+    expect(links.map((link) => link.textContent)).toEqual(siteConfig.nav.map((item) => item.label));
     expect(nav.querySelector('[data-testid="theme-toggle"]')).not.toBeNull();
 
     const contact = nav.querySelector(".chip");

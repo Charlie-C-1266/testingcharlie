@@ -30,14 +30,9 @@ export function renderThemeToggle(label: string): HTMLButtonElement {
   });
 }
 
-/** Nav bar (section 1): brand on the left, status + links + toggle + contact. */
+/** Nav bar (section 1): brand on the left, links + toggle + contact. */
 export function renderNav(config: SiteConfig): HTMLElement {
-  const { identity, nav, buildStatus, ui } = config;
-
-  const status = el("span", {
-    class: "status",
-    children: [el("span", { class: "status-dot", attrs: { "aria-hidden": "true" } }), buildStatus],
-  });
+  const { identity, nav, ui } = config;
 
   const links = nav.map((item) => el("a", { class: "nav__link", text: item.label, attrs: { href: item.href } }));
 
@@ -50,7 +45,7 @@ export function renderNav(config: SiteConfig): HTMLElement {
   const right = el("nav", {
     class: "nav__links",
     attrs: { "aria-label": "Primary" },
-    children: [status, ...links, renderThemeToggle(ui.themeToggle.toDark), contact],
+    children: [...links, renderThemeToggle(ui.themeToggle.toDark), contact],
   });
 
   return el("header", { class: "nav", children: [renderBrand(identity), right] });
